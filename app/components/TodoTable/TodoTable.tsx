@@ -1,10 +1,10 @@
 import { DataTable, Text } from "react-native-paper";
 import StatusIcon from "./StatusIcon";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import StatusEnum from "@/src/shared/StatusEnum";
 
 const items = [
-    { key: 1, task: 'Lavar a louça', status: StatusEnum.PENDING, tag: 'casa' },
+    { key: 1, task: 'Lavar a louça', status: StatusEnum.ONGOING, tag: 'casa' },
     { key: 2, task: 'Estudar modulo backend', status: StatusEnum.STOPED, tag: 'estudo, PUC' },
     { key: 3, task: 'Fazer a prova do modulo 1 da pós, necessário entregar até sexta de tarde senão pode ter que fazer a materia de novo', status: StatusEnum.PENDING, tag: 'estudo' },
     { key: 4, task: 'Fazer o trabalho escrito do SIC', status: StatusEnum.PENDING, tag: 'estudo, mestrado' },
@@ -12,6 +12,9 @@ const items = [
 ];
 
 export default function TodoTable() {
+    const handleIconPress = (key: number) => {
+        console.log('Icon pressed', key);
+    }
     return (<DataTable>
         <DataTable.Header>
             <DataTable.Title><></></DataTable.Title>
@@ -21,7 +24,9 @@ export default function TodoTable() {
         {items.map((item) => (
             <DataTable.Row key={item.key}>
                 <DataTable.Cell style={{ flex: 0.5 }}>
-                    <StatusIcon status={item.status} />
+                    <Pressable onPress={() => handleIconPress(item.key)}>
+                        <StatusIcon status={item.status} />
+                    </Pressable>
                 </DataTable.Cell>
                 <DataTable.Cell style={{
                     flex: 5,

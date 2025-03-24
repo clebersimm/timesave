@@ -3,25 +3,28 @@ import { StatusBar } from "expo-status-bar";
 
 export default function TabLayout() {
     return (
-        <Tabs
-            screenOptions={{
-                headerShown: false,
-                tabBarStyle: {},
-
-            }}
-        >
-            <Tabs.Screen
-                name="index"
-                options={{
-                    title: 'Atividades'
+        <>
+            <StatusBar style="inverted" />
+            <Tabs
+                screenOptions={{
+                    headerShown: false,
                 }}
-            />
-            <Tabs.Screen
-                name="historic"
-                options={{
-                    title: 'Histórico'
-                }}
-            />
-        </Tabs>
+            >
+                <Tabs.Screen
+                    name="index"
+                    options={{
+                        title: 'Atividades',
+                        headerShown: true
+                    }}
+                />
+                <Tabs.Screen
+                    name="historic"
+                    options={{
+                        title: 'Histórico',
+                        headerShown: true
+                    }}
+                />
+            </Tabs>
+        </>
     );
 }

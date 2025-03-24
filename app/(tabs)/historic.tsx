@@ -9,11 +9,18 @@ export default function Historic() {
         flex: 1,
       }}
     >
-      <Text>
-        <TextInput
-          label="Description"
-        />
-      </Text>
+      <View style={{ flexDirection: "row", paddingStart: 10, paddingTop: 10 }}>
+        <View style={{ flex: 1 }}>
+          <Text>
+        Description
+          </Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text>
+        End date
+          </Text>
+        </View>
+      </View>
     </SafeAreaView>
   );
 }

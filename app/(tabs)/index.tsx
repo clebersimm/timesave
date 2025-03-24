@@ -8,28 +8,20 @@ import FabNewActivity from "../components/FabNewActivity";
 export default function Index() {
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={style.creditDebitInfoContainer}>
+    <View style={{ flex: 1 }}>
+      <View>
         <CreditInfo />
       </View>
       <View style={style.contentContainer}>
         <TodoTable />
       </View>
       <FabNewActivity />
-    </SafeAreaView>
+    </View>
   );
 }
 
 const style = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  creditDebitInfoContainer: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-evenly"
-  },
   contentContainer: {
-    flex: 8
+    flex: 1
   }
 });
