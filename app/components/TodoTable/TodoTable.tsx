@@ -9,6 +9,7 @@ const items = [
     { key: 3, task: 'Fazer a prova do modulo 1 da pós, necessário entregar até sexta de tarde senão pode ter que fazer a materia de novo', status: StatusEnum.PENDING, tag: 'estudo' },
     { key: 4, task: 'Fazer o trabalho escrito do SIC', status: StatusEnum.PENDING, tag: 'estudo, mestrado' },
     { key: 5, task: 'Arrumar muro dos fundos. Necessário chamar o pedreiro', status: StatusEnum.PENDING, tag: 'casa, obra, externo' },
+    { key: 6, task: 'Esta é uma tarefa com uma descrição muito longa que excede 255 caracteres. Esta descrição é apenas um exemplo para demonstrar como lidar com tarefas que possuem descrições extremamente longas. A descrição continua e continua, adicionando mais e mais texto para garantir que ultrapasse o limite de 255 caracteres.', status: StatusEnum.PENDING, tag: 'exemplo' },
 ];
 
 export default function TodoTable() {
