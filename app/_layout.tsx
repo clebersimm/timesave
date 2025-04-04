@@ -6,6 +6,7 @@ export default function RootLayout() {
   return <PaperProvider theme={DefaultTheme}>
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="task/[id]" options={{ title:"Detalhes" }} />
     </Stack>
     <StatusBar style="inverted" networkActivityIndicatorVisible />
   </PaperProvider>
