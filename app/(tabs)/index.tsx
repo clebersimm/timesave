@@ -1,8 +1,8 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import CreditInfo from "../components/ui/CreditInfo";
-import TodoTable from "../components/TodoTable/TodoTable";
-import FabNewActivity from "../components/FabNewActivity";
+import CreditInfo from "../../components/ui/CreditInfo";
+import TodoTable from "../../components/TodoTable/TodoTable";
+import FabNewActivity from "../../components/FabNewActivity";
 
 export default function Index() {
 

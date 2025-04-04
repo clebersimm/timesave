@@ -4,6 +4,7 @@ import StatusEnum from "@/src/shared/StatusEnum";
 import ActionButton from "./ActionButton";
 import { Dialog } from "react-native-paper";
 import { useState } from "react";
+import { Link } from "expo-router";
 
 const items = [
     { key: 1, task: 'Lavar a louça', status: StatusEnum.ONGOING, tag: 'casa' },
@@ -56,25 +57,29 @@ export default function TodoTable() {
                 <FlatList data={items}
                     keyExtractor={(item) => item.key.toString()}
                     renderItem={({ item }) => (
-                        <List.Item
-                            key={item.key}
-                            title={item.task}
-                            description={item.tag}
-                            onPress={() => handleShowDialogDetails(item.task, item.tag)}
-                            style={{ padding: 16, borderBottomWidth: 1, borderBottomColor: '#ccc' }}
-                            titleStyle={{ fontSize: 16, fontWeight: 'bold' }}
-                            descriptionStyle={{ fontSize: 14, color: '#666' }}
-                            right={() => (
-                                <ActionButton
-                                    status={item.status}
-                                    onPress={() => handleIconPress(item.key)}
-                                />
-                            )}
-                            titleNumberOfLines={5}
-                            descriptionNumberOfLines={1}
-                            titleEllipsizeMode="tail"
-                            descriptionEllipsizeMode="tail"
-                        />
+                        <Link href={{
+                            pathname: '/task/[id]',
+                            params: { id: item.key }
+                        }}>
+                            <List.Item
+                                key={item.key}
+                                title={item.task}
+                                description={item.tag}
+                                style={{ padding: 16, borderBottomWidth: 1, borderBottomColor: '#ccc' }}
+                                titleStyle={{ fontSize: 16, fontWeight: 'bold' }}
+                                descriptionStyle={{ fontSize: 14, color: '#666' }}
+                                right={() => (
+                                    <ActionButton
+                                        status={item.status}
+                                        onPress={() => handleIconPress(item.key)}
+                                    />
+                                )}
+                                titleNumberOfLines={5}
+                                descriptionNumberOfLines={1}
+                                titleEllipsizeMode="tail"
+                                descriptionEllipsizeMode="tail"
+                            />
+                        </Link>
                     )}>
                 </FlatList>
             </View>
