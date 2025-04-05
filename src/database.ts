@@ -1,53 +1,41 @@
 import * as SQLite from 'expo-sqlite';
 
-const db = SQLite.openDatabaseAsync('myDatabase.db');
-
-export const initDB = (): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    db.withTransactionAsync(tx => {
-      // Create a table if it doesn't exist
-      tx.executeSql(
-        `CREATE TABLE IF NOT EXISTS users (
-          id INTEGER PRIMARY KEY NOT NULL,
-          name TEXT NOT NULL,
-          age INTEGER NOT NULL
-        );`,
-        [],
-        () => {
-          console.log('Table created successfully');
-          // Check for schema updates here
-          checkSchemaUpdates(tx)
-            .then(resolve)
-            .catch(reject);
-        },
-        (_, error) => {
-          console.log('Error creating table:', error);
-          reject(error);
-        }
-      );
-    });
-  });
+const _getDBConnection = async () => {
+  const db = await SQLite.openDatabaseAsync('timesave.db');
+  return db;
 };
 
-const checkSchemaUpdates = (tx: SQLite.SQLTransaction): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    // Example: Add a new column 'email' if it doesn't exist
-    tx.executeSql(
-      `ALTER TABLE users ADD COLUMN email TEXT;`,
-      [],
-      () => {
-        console.log('Schema updated successfully');
-        resolve();
-      },
-      (_, error) => {
-        // Ignore error if column already exists
-        if (error.message.includes('duplicate column name')) {
-          resolve();
-        } else {
-          console.log('Error updating schema:', error);
-          reject(error);
-        }
-      }
+const _initDB = async () => {
+  const db = await _getDBConnection();
+  const query = `
+    CREATE TABLE IF NOT EXISTS task (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      task TEXT NOT NULL,
+      status INTEGER NOT NULL,
+      status_description TEXT,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      deleted_at TEXT,
+      type INTEGER NOT NULL,
+      operation INTEGER NOT NULL,
+      value INTEGER,
+      tag TEXT
     );
-  });
+    CREATE TABLE IF NOT EXISTS task_history (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      task_id INTEGER NOT NULL,
+      status INTEGER NOT NULL,
+      status_description TEXT,
+      created_at TEXT NOT NULL,
+      value INTEGER,
+      FOREIGN KEY (task_id) REFERENCES task (id)
+    );
+    CREATE TABLE IF NOT EXISTS total(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      value INTEGER NOT NULL,
+      operation INTEGER NOT NULL,
+      created_at TEXT NOT NULL
+    );
+  `;
+  await db.execAsync(query);
 };
