@@ -7,7 +7,7 @@ export default function RootLayout() {
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="task/[id]" options={{ title:"Details" }} />
-      <Stack.Screen name="newtask/index" options={{ title:"New Task" }} />
+      <Stack.Screen name="newtask/index" />
     </Stack>
     <StatusBar style="inverted" networkActivityIndicatorVisible />
   </PaperProvider>
