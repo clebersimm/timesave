@@ -1,0 +1,24 @@
+import OperationEnum from "@/src/shared/OperationEnum";
+import { View } from "react-native";
+import { RadioButton, Text, TextInput } from "react-native-paper";
+
+export default function OperationInput() {
+    return (
+        <>
+            <View>
+                <Text>Operation</Text>
+            </View>
+            <RadioButton.Group onValueChange={value => console.log(value)} value={OperationEnum.CREDIT}>
+                <View>
+                    <Text>{OperationEnum.CREDIT}</Text>
+                    <RadioButton value={OperationEnum.CREDIT} />
+                </View>
+                <View>
+                    <Text>{OperationEnum.DEBIT}</Text>
+                    <RadioButton value={OperationEnum.DEBIT} />
+                </View>
+            </RadioButton.Group>
+        </>
+
+    );
+}

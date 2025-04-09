@@ -17,7 +17,7 @@ export default function TabLayout() {
                 <Tabs.Screen
                     name="index"
                     options={{
-                        title: 'Atividades',
+                        title: 'Tasks',
                         headerShown: true,
                         tabBarIcon: ({ color }) => (
                             <FontAwesome name="home" color={color} size={24} />
@@ -27,7 +27,7 @@ export default function TabLayout() {
                 <Tabs.Screen
                     name="historic"
                     options={{
-                        title: 'Histórico',
+                        title: 'Historic',
                         headerShown: true,
                         tabBarIcon: ({ color }) => (
                             <FontAwesome name="history" color={color} size={24} />

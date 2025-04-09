@@ -1,10 +1,20 @@
+import { useRouter } from "expo-router";
 import { StyleSheet } from "react-native";
 import { FAB } from "react-native-paper";
 
 export default function AppFab() {
+
+    const router = useRouter();
+
+    const fabPressedHandler = () => {
+        router.navigate('/newtask');
+    }
+
     return (<FAB
         icon="plus"
         style={styles.fab}
+        onPress={() => fabPressedHandler()}
+        label="New Task"
     />)
 }
 

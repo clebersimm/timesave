@@ -1,12 +1,20 @@
 import * as SQLite from 'expo-sqlite';
 
-const _getDBConnection = async () => {
+export const getDBConnection = async () => {
   const db = await SQLite.openDatabaseAsync('timesave.db');
   return db;
 };
 
+export const initDatabase = async () => {
+  try {
+    await _initDB();
+  } catch (error) {
+    console.error('Error initializing database:', error);
+  }
+};
+
 const _initDB = async () => {
-  const db = await _getDBConnection();
+  const db = await getDBConnection();
   const query = `
     CREATE TABLE IF NOT EXISTS task (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
