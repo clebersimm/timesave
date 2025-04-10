@@ -7,14 +7,16 @@ export default function TaskTypeInput() {
     return (
         <RadioGroupInput>
             <Text variant="titleMedium">Task Type</Text>
-            <RadioButton.Group onValueChange={value => console.log(value)} value="first">
+            <RadioButton.Group
+                onValueChange={value => console.log(value)}
+                value="first">
                 <View>
                     <Text>{TaskTypeEnum.ACTION}</Text>
-                    <RadioButton value="first" />
+                    <RadioButton.Item label={TaskTypeEnum.ACTION} value="first" />
                 </View>
                 <View>
                     <Text>{TaskTypeEnum.TIME}</Text>
-                    <RadioButton value="second" />
+                    <RadioButton.Item label={TaskTypeEnum.TIME} value="second" />
                 </View>
             </RadioButton.Group>
         </RadioGroupInput>

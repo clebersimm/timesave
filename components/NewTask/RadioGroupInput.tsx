@@ -14,5 +14,6 @@ const styles = {
         marginHorizontal: 8,
         marginVertical: 8,
         paddingLeft: 8,
+        width: '30%' as unknown as number,
     },
 };
