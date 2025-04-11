@@ -1,17 +1,16 @@
 import { View } from "react-native";
 import { TextInput } from "react-native-paper";
+import { TextInputProps } from "react-native-paper";
 
-export type NewTaskTextInputProps = {
-    label: string;
-    placeholder: string;
-};
+interface NewTaskTextInputProps {
+    textInputConfig: TextInputProps;
+}
 
-export default function NewTaskTextInput(props: NewTaskTextInputProps) {
+export default function NewTaskTextInput({ textInputConfig }: NewTaskTextInputProps) {
     return (
         <View style={styles.container}>
             <TextInput
-                label={props.label}
-                placeholder={props.placeholder}
+                {...textInputConfig}
             />
         </View>
     );

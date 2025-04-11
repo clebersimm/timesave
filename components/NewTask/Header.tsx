@@ -1,7 +1,11 @@
 import { Stack } from "expo-router";
 import { Appbar } from "react-native-paper";
 
-export default function NewTaskHeader() {
+export type NewTaskHeaderProps = {
+    onSubmit: Function;
+}
+
+export default function NewTaskHeader({ onSubmit }: NewTaskHeaderProps) {
     return (
         <Stack.Screen
             name="newtask/index"
@@ -10,7 +14,7 @@ export default function NewTaskHeader() {
                     <Appbar.Header>
                         <Appbar.BackAction onPress={() => { }} />
                         <Appbar.Content title="New Task" />
-                        <Appbar.Action icon="content-save" onPress={() => { }} />
+                        <Appbar.Action icon="content-save" onPress={() => onSubmit()} />
                     </Appbar.Header>
                 ),
             }}

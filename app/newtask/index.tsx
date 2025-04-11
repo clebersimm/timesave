@@ -2,10 +2,12 @@ import NewTaskHeader from "@/components/NewTask/Header";
 import NewTaskTextInput from "@/components/NewTask/NewTaskTextInput";
 import OperationInput from "@/components/NewTask/OperationInput";
 import TaskTypeInput from "@/components/NewTask/TaskTypeInput";
+import { taskService } from "@/src/services/TaskService";
 import OperationEnum from "@/src/shared/OperationEnum";
 import TaskTypeEnum from "@/src/shared/TaskTypeEnum";
 import { useState } from "react";
 import { View } from "react-native";
+
 
 export type TaksForm = {
     task: string;
@@ -14,7 +16,7 @@ export type TaksForm = {
     operation: OperationEnum;
 }
 
-export default function NewTask() {
+export default function NewTask(this: any) {
     const [inputForm, setInputForm] = useState<TaksForm>({
         task: "",
         tags: "",
@@ -29,12 +31,36 @@ export default function NewTask() {
             };
         });
     };
+    function submitHandler() {
+        const service = taskService
+        service.addTask({
+            task: inputForm.task,
+            type: inputForm.type,
+            operation: inputForm.operation,
+            value: 0,
+            tag: inputForm.tags,
+        });
+    }
     return (
         <>
             <View style={styles.container}>
-                <NewTaskHeader />
-                <NewTaskTextInput label="Task" placeholder="Enter the task description" />
-                <NewTaskTextInput label="Tags" placeholder="Add some tags" />
+                <NewTaskHeader 
+                    onSubmit={submitHandler}
+                />
+                <NewTaskTextInput textInputConfig={{
+                    label: "Task",
+                    placeholder: "Add a task",
+                    value: inputForm.task,
+                    onChangeText: inputChagedHandler.bind(this, "task"),
+                }} />
+                <NewTaskTextInput 
+                    textInputConfig={{
+                        label: "Tags",
+                        placeholder: "Add a tag",
+                        value: inputForm.tags,
+                        onChangeText: inputChagedHandler.bind(this, "tags"),
+                    }}
+                />
                 <TaskTypeInput />
                 <OperationInput />
             </View>

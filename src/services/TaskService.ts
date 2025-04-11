@@ -1,5 +1,6 @@
 import TaskRepository from "../repository/TaskRepository";
 import { TaskRepositoryImpl } from "../repository/TaskRepositoryImpl";
+import OperationEnum from "../shared/OperationEnum";
 import StatusEnum, { StatusEnumUtils } from "../shared/StatusEnum";
 import TaskTypeEnum, { TaskTypeEnumUtils } from "../shared/TaskTypeEnum";
 
@@ -27,7 +28,22 @@ export class TaskOutput {
     }
 }
 
-export default class TaskService {
+export class TaskInput {
+    constructor(
+        readonly task: string,
+        readonly type: TaskTypeEnum,
+        readonly operation: OperationEnum,
+        readonly value: number,
+        readonly tag: string
+    ) { }
+}
+
+export interface TaskServiceInterface {
+    getTasks(): Promise<TaskOutput[]>;
+    addTask(input: TaskInput): Promise<void>;
+}
+
+export class TaskServiceImpl implements TaskServiceInterface {
 
     private _taskRepository: TaskRepository;
 
@@ -51,4 +67,18 @@ export default class TaskService {
             task.tag
         ));
     }
+
+    async addTask(input: TaskInput): Promise<void> {
+        console.log(input);
+        const task = {
+            task: input.task,
+            type: input.type,
+            operation: input.operation,
+            value: input.value,
+            tag: input.tag
+        };
+        //await this._taskRepository.addTask(task);
+    }
 }
+
+export const taskService = new TaskServiceImpl();
