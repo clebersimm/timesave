@@ -3,13 +3,21 @@ import { View } from "react-native";
 import { RadioButton, Text } from "react-native-paper";
 import RadioGroupInput from "./RadioGroupInput";
 
-export default function OperationInput() {
+interface RadioButtonConfigProps {
+    onValueChangeHandler: Function;
+    value: OperationEnum;
+}
+
+export default function OperationInput({ value, onValueChangeHandler }: RadioButtonConfigProps) {
     return (
         <RadioGroupInput>
             <View>
                 <Text variant="titleMedium">Operation</Text>
             </View>
-            <RadioButton.Group onValueChange={value => console.log(value)} value={OperationEnum.CREDIT}>
+            <RadioButton.Group onValueChange={
+                (newValue) => onValueChangeHandler(newValue)
+            }
+                value={value}>
                 <View>
                     <Text>{OperationEnum.CREDIT}</Text>
                     <RadioButton.Item label={OperationEnum.CREDIT} value={OperationEnum.CREDIT} />

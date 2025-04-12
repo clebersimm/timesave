@@ -21,7 +21,7 @@ export function TodoTableItem({ item, onPress }: TodoTableItemProps) {
             <List.Item
                 key={item.id}
                 title={item.task}
-                description={item.tag}
+                description={item.tags}
                 style={{ padding: 16, borderBottomWidth: 1, borderBottomColor: '#ccc' }}
                 titleStyle={{ fontSize: 16, fontWeight: 'bold' }}
                 descriptionStyle={{ fontSize: 14, color: '#666' }}
@@ -30,7 +30,7 @@ export function TodoTableItem({ item, onPress }: TodoTableItemProps) {
                 titleEllipsizeMode="tail"
                 descriptionEllipsizeMode="tail"
                 right={() => <ActionButton
-                    status={item.getStatusTask()}
+                    status={item.status}
                     onPress={onPress}
                 />}
             />

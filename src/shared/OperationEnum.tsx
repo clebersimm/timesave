@@ -4,11 +4,10 @@ enum OperationEnum {
 }
 
 export class OperationEnumUtils {
-    static getOperationEnum(value: number): OperationEnum | undefined {
-        const statusKeys = Object.keys(OperationEnum).filter((key) => isNaN(Number(key)));
-        const statusValues = statusKeys.map((key) => OperationEnum[key as keyof typeof OperationEnum]);
-        return statusValues[value];
+    static getOperationEnum(value: string): OperationEnum | undefined {
+        return Object.values(OperationEnum).find((type) => type === value);
     }
+
 }
 
 export default OperationEnum;

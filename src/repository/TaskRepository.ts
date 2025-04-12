@@ -10,14 +10,13 @@ export class Task {
     constructor(
         readonly id: number,
         readonly task: string,
-        readonly status: number,
-        readonly status_description: string,
+        readonly status: string,
         readonly created_at: string,
         readonly updated_at: string,
-        readonly deleted_at: string,
         readonly type: string,
-        readonly operation: number,
-        readonly value: number,
-        readonly tag: string
+        readonly operation: string,
+        readonly tags: string,
+        readonly deleted_at?: string,
+        readonly value?: number,
     ) { }
 }

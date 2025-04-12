@@ -1,6 +1,6 @@
 import TaskRepository from "../repository/TaskRepository";
 import { TaskRepositoryImpl } from "../repository/TaskRepositoryImpl";
-import OperationEnum from "../shared/OperationEnum";
+import OperationEnum, { OperationEnumUtils } from "../shared/OperationEnum";
 import StatusEnum, { StatusEnumUtils } from "../shared/StatusEnum";
 import TaskTypeEnum, { TaskTypeEnumUtils } from "../shared/TaskTypeEnum";
 
@@ -8,24 +8,15 @@ export class TaskOutput {
     constructor(
         readonly id: number,
         readonly task: string,
-        readonly status: number,
-        readonly status_description: string,
+        readonly status: StatusEnum,
         readonly created_at: string,
         readonly updated_at: string,
-        readonly deleted_at: string,
-        readonly type: string,
-        readonly operation: number,
-        readonly value: number,
-        readonly tag: string
+        readonly type: TaskTypeEnum,
+        readonly operation: OperationEnum,
+        readonly tags: string,
+        readonly value?: number,
+        readonly deleted_at?: string,
     ) { }
-
-    public getTypeTask(): TaskTypeEnum {
-        return TaskTypeEnumUtils.getTaskTypeEnum(this.type) ?? TaskTypeEnum.TIME;
-    }
-
-    public getStatusTask(): StatusEnum {
-        return StatusEnumUtils.getStatusEnum(this.status) ?? StatusEnum.PENDING;
-    }
 }
 
 export class TaskInput {
@@ -33,8 +24,8 @@ export class TaskInput {
         readonly task: string,
         readonly type: TaskTypeEnum,
         readonly operation: OperationEnum,
-        readonly value: number,
-        readonly tag: string
+        readonly tags: string,
+        readonly value?: number,
     ) { }
 }
 
@@ -56,28 +47,31 @@ export class TaskServiceImpl implements TaskServiceInterface {
         return tasks.map(task => new TaskOutput(
             task.id,
             task.task,
-            task.status,
-            task.status_description,
+            StatusEnumUtils.getStatusEnum(task.status) ?? StatusEnum.PENDING,
             task.created_at,
             task.updated_at,
-            task.deleted_at,
-            task.type,
-            task.operation,
+            TaskTypeEnumUtils.getTaskTypeEnum(task.type) ?? TaskTypeEnum.TIME,
+            OperationEnumUtils.getOperationEnum(task.operation) ?? OperationEnum.CREDIT,
+            task.tags,
             task.value,
-            task.tag
+            task.deleted_at,
         ));
     }
 
     async addTask(input: TaskInput): Promise<void> {
         console.log(input);
         const task = {
+            id: 0,
             task: input.task,
+            status: StatusEnum.PENDING,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
             type: input.type,
             operation: input.operation,
+            tags: input.tags,
             value: input.value,
-            tag: input.tag
         };
-        //await this._taskRepository.addTask(task);
+        await this._taskRepository.addTask(task);
     }
 }
 
