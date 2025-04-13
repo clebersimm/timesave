@@ -1,3 +1,4 @@
+import Loading from "@/components/Loading/Loading";
 import NewTaskHeader from "@/components/NewTask/Header";
 import NewTaskTextInput from "@/components/NewTask/NewTaskTextInput";
 import OperationInput from "@/components/NewTask/OperationInput";
@@ -8,7 +9,6 @@ import TaskTypeEnum from "@/src/shared/TaskTypeEnum";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
-
 
 export type TaksForm = {
     task: string;
@@ -26,9 +26,10 @@ export default function NewTask(this: any) {
         value: 0,
         operation: OperationEnum.CREDIT,
     });
+    const [showLoading, setShowLoading] = useState(false);
     const router = useRouter();
 
-    function inputChagedHandler(inputIdentifier: any, enteredValue: any) {
+    function inputChagedHandler(inputIdentifier: string, enteredValue: any) {
         setInputForm((currentInputForm) => {
             return {
                 ...currentInputForm,
@@ -36,7 +37,7 @@ export default function NewTask(this: any) {
             };
         });
     };
-    function changeValueHandler(inputIdentifier: any, valueSelected: any) {
+    function changeValueHandler(inputIdentifier: string, valueSelected: any) {
         setInputForm((currentInputForm) => {
             return {
                 ...currentInputForm,
@@ -45,6 +46,7 @@ export default function NewTask(this: any) {
         });
     }
     async function submitHandler() {
+        setShowLoading(true);
         const service = taskService;
         await service.addTask({
             task: inputForm.task,
@@ -53,16 +55,23 @@ export default function NewTask(this: any) {
             value: inputForm.value,
             tags: inputForm.tags,
         });
+        setShowLoading(false);
+        _returnToPreviousScreen();
     }
-    function backActionHandler() {
+
+    function _returnToPreviousScreen() {
         router.dismiss(1)
+    }
+
+    function backActionHandler() {
+        _returnToPreviousScreen()
     }
 
     let ValueInput = (<></>);
     if (inputForm.type === TaskTypeEnum.ACTION) {
         ValueInput = (<NewTaskTextInput
             textInputConfig={{
-                label: "Value",
+                label: "Value ",
                 placeholder: "Add a value",
                 value: inputForm.value !== undefined ? String(inputForm.value) : undefined,
                 onChangeText: inputChagedHandler.bind(this, "value"),
@@ -70,22 +79,31 @@ export default function NewTask(this: any) {
         />);
     }
 
+    let loading = (<></>);
+    if (showLoading) {
+        loading = (<Loading />);
+    }
+
     return (
         <>
             <View style={styles.container}>
                 <NewTaskHeader
                     backActionHandler={backActionHandler}
-                    onSubmit={submitHandler}
+                    onSubmit={() => submitHandler()}
                 />
                 <NewTaskTextInput textInputConfig={{
-                    label: "Task",
+                    label: "Task *",
                     placeholder: "Add a task",
+                    mode: "outlined",
                     value: inputForm.task,
+                    returnKeyType: "next",
+                    
                     onChangeText: inputChagedHandler.bind(this, "task"),
                 }} />
                 <NewTaskTextInput
                     textInputConfig={{
                         label: "Tags",
+                        mode: "outlined",
                         placeholder: "Add a tag",
                         value: inputForm.tags,
                         onChangeText: inputChagedHandler.bind(this, "tags"),
@@ -101,6 +119,7 @@ export default function NewTask(this: any) {
                     onValueChangeHandler={(newValue: TaskTypeEnum) => changeValueHandler("operation", newValue)}
                 />
             </View>
+            {loading}
         </>
     );
 }
