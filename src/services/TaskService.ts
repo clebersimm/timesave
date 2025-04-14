@@ -17,6 +17,15 @@ export class TaskOutput {
         readonly value?: number,
         readonly deleted_at?: string,
     ) { }
+
+    get createdAt(): string {
+        return new Date(this.created_at).toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        });
+    }
+
 }
 
 export class TaskInput {
