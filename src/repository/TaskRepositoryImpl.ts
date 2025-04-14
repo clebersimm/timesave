@@ -8,7 +8,11 @@ export class TaskRepositoryImpl implements TaskRepository {
         return this._tasks;
     }
     async getTaskById(id: number): Promise<Task | null> {
-        throw new Error("Method not implemented.");
+        this._tasks = this._tasks.filter(task => task.id === id);
+        if (this._tasks.length === 0) {
+            return null;
+        }
+        return this._tasks[0];
     }
     async addTask(task: Task): Promise<void> {
         this._tasks.push(task);

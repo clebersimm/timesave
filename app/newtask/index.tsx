@@ -7,8 +7,9 @@ import { taskService } from "@/src/services/TaskService";
 import OperationEnum from "@/src/shared/OperationEnum";
 import TaskTypeEnum from "@/src/shared/TaskTypeEnum";
 import { useRouter } from "expo-router";
-import { useState } from "react";
-import { View } from "react-native";
+import { useRef, useState } from "react";
+import { TextInput, View } from "react-native";
+
 
 export type TaksForm = {
     task: string;
@@ -28,6 +29,7 @@ export default function NewTask(this: any) {
     });
     const [showLoading, setShowLoading] = useState(false);
     const router = useRouter();
+    const tagRef = useRef<TextInput>(null);
 
     function inputChagedHandler(inputIdentifier: string, enteredValue: any) {
         setInputForm((currentInputForm) => {
@@ -97,7 +99,9 @@ export default function NewTask(this: any) {
                     mode: "outlined",
                     value: inputForm.task,
                     returnKeyType: "next",
-                    
+                    onSubmitEditing: () => {
+                        tagRef.current?.focus();
+                    },
                     onChangeText: inputChagedHandler.bind(this, "task"),
                 }} />
                 <NewTaskTextInput
@@ -106,6 +110,7 @@ export default function NewTask(this: any) {
                         mode: "outlined",
                         placeholder: "Add a tag",
                         value: inputForm.tags,
+                        ref: tagRef,
                         onChangeText: inputChagedHandler.bind(this, "tags"),
                     }}
                 />

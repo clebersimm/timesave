@@ -1,6 +1,6 @@
 import { FlatList, View } from "react-native";
 import { TodoTableItem } from "./TodoTableItem";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { TaskOutput, taskService } from "@/src/services/TaskService";
 import { useFocusEffect } from "expo-router";
 

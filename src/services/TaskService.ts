@@ -73,6 +73,25 @@ export class TaskServiceImpl implements TaskServiceInterface {
         };
         await this._taskRepository.addTask(task);
     }
+
+    async getTaskById(id: number): Promise<TaskOutput | null> {
+        const task = await this._taskRepository.getTaskById(id);
+        if (!task) {
+            return null;
+        }
+        return new TaskOutput(
+            task.id,
+            task.task,
+            StatusEnumUtils.getStatusEnum(task.status) ?? StatusEnum.PENDING,
+            task.created_at,
+            task.updated_at,
+            TaskTypeEnumUtils.getTaskTypeEnum(task.type) ?? TaskTypeEnum.TIME,
+            OperationEnumUtils.getOperationEnum(task.operation) ?? OperationEnum.CREDIT,
+            task.tags,
+            task.value,
+            task.deleted_at,
+        );
+    }
 }
 
 export const taskService = new TaskServiceImpl();
