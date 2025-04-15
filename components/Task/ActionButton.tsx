@@ -7,18 +7,19 @@ import { Button } from "react-native-paper";
 export type ActionButtonProps = {
     task: TaskOutput | null;
     actionHandler: Function;
+    active?: boolean;
 };
 
-export default function ActionButton({ task, actionHandler }: ActionButtonProps) {
+export default function ActionButton({ task, actionHandler, active }: ActionButtonProps) {
     let actionButton = <></>;
     if (task?.type === TaskTypeEnum.TIME) {
         actionButton = (
             <Button
-                icon="play"
+                icon={active ? "pause" : "play"}
                 mode="contained"
                 onPress={() => actionHandler(task.type)}
             >
-                Start
+                {active ? "Pause" : "Start"}
             </Button>
         );
     } else {

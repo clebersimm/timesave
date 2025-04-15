@@ -4,6 +4,7 @@ export default interface TaskRepository {
     addTask(task: Task): Promise<void>;
     updateTask(task: Task): Promise<void>;
     deleteTask(id: number): Promise<void>;
+    existsTask(id: number): Promise<boolean>;
 }
 
 export class Task {

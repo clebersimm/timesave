@@ -53,9 +53,9 @@ export default function Task() {
     const actionHanlder = async (type: TaskTypeEnum) => {
         console.log("actionHanlder", type);
         if (type === TaskTypeEnum.TIME) {
-            //const data = await taskService.strtTask(Number(id));
+            const data = await taskService.startTask(Number(id));
             //setData(data);
-            setActivateTimer(true);
+            setActivateTimer(!activateTimer);
         } else {
             //const data = await taskService.completeTask(Number(id));
             //setData(data);
@@ -65,7 +65,7 @@ export default function Task() {
     return (
         <View style={styles.container}>
             <View>
-                <Text>Description: {data?.task}</Text>
+                <Text>Task: {data?.task}</Text>
             </View>
             <View>
                 <Text>Status: {data?.status}</Text>
@@ -79,7 +79,9 @@ export default function Task() {
             <View>
                 <Text>Operation: {data?.operation}</Text>
             </View>
-            <ActionButton task={data} actionHandler={actionHanlder} />
+            <ActionButton task={data} 
+            actionHandler={actionHanlder} 
+            active={activateTimer} />
             <Surface style={styles.timerContainer}>
                 <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                     <Text>Time</Text>
