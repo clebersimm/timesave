@@ -2,23 +2,43 @@ import { TaskOutput, taskService } from "@/src/services/TaskService";
 import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import { View } from "react-native";
-import { Button, Surface, Text } from "react-native-paper";
+import { Surface, Text } from "react-native-paper";
 import { useEffect } from "react";
+import TaskTypeEnum from "@/src/shared/TaskTypeEnum";
+import ActionButton from "@/components/Task/ActionButton";
 
 export default function Task() {
     const { id } = useLocalSearchParams();
     const [data, setData] = useState<TaskOutput | null>(null);
     const [time, setTime] = useState<string>("00:00:00");
+    const [activateTimer, setActivateTimer] = useState(false);
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            const now = new Date();
-            const formattedTime = now.toLocaleTimeString("en-US", { hour12: false });
-            setTime(formattedTime);
-        }, 1000);
+        if (activateTimer) {
+            const interval = setInterval(() => {
+                setTime((prevTime) => {
+                    const [hours, minutes, seconds] = prevTime.split(":").map(Number);
+                    let newSeconds = seconds + 1;
+                    let newMinutes = minutes;
+                    let newHours = hours;
 
-        return () => clearInterval(interval);
-    }, []);
+                    if (newSeconds === 60) {
+                        newSeconds = 0;
+                        newMinutes += 1;
+                    }
+
+                    if (newMinutes === 60) {
+                        newMinutes = 0;
+                        newHours += 1;
+                    }
+
+                    return `${String(newHours).padStart(2, "0")}:${String(newMinutes).padStart(2, "0")}:${String(newSeconds).padStart(2, "0")}`;
+                });
+            }, 1000);
+
+            return () => clearInterval(interval);
+        }
+    }, [activateTimer]);
 
     useFocusEffect(
         useCallback(() => {
@@ -29,9 +49,21 @@ export default function Task() {
             fetchData();
         }, [id])
     );
+
+    const actionHanlder = async (type: TaskTypeEnum) => {
+        console.log("actionHanlder", type);
+        if (type === TaskTypeEnum.TIME) {
+            //const data = await taskService.strtTask(Number(id));
+            //setData(data);
+            setActivateTimer(true);
+        } else {
+            //const data = await taskService.completeTask(Number(id));
+            //setData(data);
+        }
+    };
+
     return (
         <View style={styles.container}>
-
             <View>
                 <Text>Description: {data?.task}</Text>
             </View>
@@ -47,17 +79,7 @@ export default function Task() {
             <View>
                 <Text>Operation: {data?.operation}</Text>
             </View>
-            <View>
-                <Button
-                    icon="play"
-                    mode="contained"
-                    onPress={() => {
-                        // Handle button press
-                    }}
-                >
-                    Start
-                </Button>
-            </View>
+            <ActionButton task={data} actionHandler={actionHanlder} />
             <Surface style={styles.timerContainer}>
                 <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                     <Text>Time</Text>
