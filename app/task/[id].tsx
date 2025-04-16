@@ -6,6 +6,7 @@ import { Surface, Text } from "react-native-paper";
 import { useEffect } from "react";
 import TaskTypeEnum from "@/src/shared/TaskTypeEnum";
 import ActionButton from "@/components/Task/ActionButton";
+import StatusEnum from "@/src/shared/StatusEnum";
 
 export default function Task() {
     const { id } = useLocalSearchParams();
@@ -44,6 +45,9 @@ export default function Task() {
         useCallback(() => {
             const fetchData = async () => {
                 const data = await taskService.getTaskById(Number(id));
+                if(data?.status === StatusEnum.ONGOING){
+                    setActivateTimer(true);
+                }
                 setData(data);
             };
             fetchData();
