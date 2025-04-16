@@ -18,8 +18,10 @@ export class TaskRepositoryImpl implements TaskRepository {
     async addTask(task: Task): Promise<void> {
         this._tasks.push(task);
     }
-    async updateTask(task: Task): Promise<void> {
-        throw new Error("Method not implemented.");
+    async updateTask(task: Task): Promise<Task> {
+        this._tasks = this._tasks.filter(t => t.id !== task.id);
+        this._tasks.push(task);
+        return task;
     }
     async deleteTask(id: number): Promise<void> {
         throw new Error("Method not implemented.");

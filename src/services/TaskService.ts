@@ -103,17 +103,37 @@ export class TaskServiceImpl implements TaskServiceInterface {
     }
 
     async startTask(id: number): Promise<TaskOutput | null> {
-        const findTask = this._taskRepository.getTaskById(id);
+        const findTask = await this._taskRepository.getTaskById(id);
         if (!findTask) {
             return null;
         }
+        let status = StatusEnum.PENDING;
+        if(findTask.status === StatusEnum.PENDING){
+            status = StatusEnum.ONGOING;
+        } else {
+            status = StatusEnum.STOPED;
+        }
+
+        switch (findTask.status) {
+            case StatusEnum.PENDING:
+                status = StatusEnum.ONGOING;
+                break;
+            case StatusEnum.ONGOING:
+                status = StatusEnum.STOPED;
+                break;
+            case StatusEnum.STOPED:
+                status = StatusEnum.ONGOING;
+                break;
+            default:
+                break;
+        }
+
         const taskUpdated = {
             ...findTask,
-            status: StatusEnum.ONGOING,
+            status: status,
             updated_at: new Date().toISOString(),
         };
-        await this._taskRepository.updateTask(taskUpdated);
-        const task = await this._taskRepository.getTaskById(id);
+        const task = await this._taskRepository.updateTask(taskUpdated);
         if (!task) {
             return null;
         }

@@ -54,7 +54,8 @@ export default function Task() {
         console.log("actionHanlder", type);
         if (type === TaskTypeEnum.TIME) {
             const data = await taskService.startTask(Number(id));
-            //setData(data);
+            console.log(data);
+            setData(data);
             setActivateTimer(!activateTimer);
         } else {
             //const data = await taskService.completeTask(Number(id));

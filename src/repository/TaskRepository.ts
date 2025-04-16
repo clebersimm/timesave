@@ -2,7 +2,7 @@ export default interface TaskRepository {
     getTasks(): Promise<Task[]>;
     getTaskById(id: number): Promise<Task | null>;
     addTask(task: Task): Promise<void>;
-    updateTask(task: Task): Promise<void>;
+    updateTask(task: Task): Promise<Task>;
     deleteTask(id: number): Promise<void>;
     existsTask(id: number): Promise<boolean>;
 }

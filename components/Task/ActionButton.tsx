@@ -15,11 +15,11 @@ export default function ActionButton({ task, actionHandler, active }: ActionButt
     if (task?.type === TaskTypeEnum.TIME) {
         actionButton = (
             <Button
-                icon={active ? "pause" : "play"}
+                icon={active ? "stop" : "play"}
                 mode="contained"
                 onPress={() => actionHandler(task.type)}
             >
-                {active ? "Pause" : "Start"}
+                {active ? "Stop" : "Start"}
             </Button>
         );
     } else {
