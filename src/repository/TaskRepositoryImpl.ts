@@ -1,9 +1,9 @@
-import TaskRepository, { Task } from "./TaskRepository";
+import TaskRepository, { Task, TaskHistory } from "./TaskRepository";
 
 export class TaskRepositoryImpl implements TaskRepository {
 
-
     private _tasks: Task[] = [];
+    private _taskHistory: TaskHistory[] = [];
 
     async getTasks(): Promise<Task[]> {
         return this._tasks;
@@ -33,5 +33,14 @@ export class TaskRepositoryImpl implements TaskRepository {
         }
         return true;
     }
-
+    async addTaskHistory(taskHistory: TaskHistory): Promise<void> {
+        this._taskHistory.push(taskHistory);
+    }
+    async getTaskHistoryByTaskId(taskId: number): Promise<TaskHistory | null> {
+        this._taskHistory = this._taskHistory.filter(task => task.task_id === taskId);
+        if (this._taskHistory.length === 0) {
+            return null;
+        }
+        return this._taskHistory[0];
+    }
 }

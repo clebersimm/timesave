@@ -1,7 +1,7 @@
 import { TaskOutput, taskService } from "@/src/services/TaskService";
 import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
-import { View } from "react-native";
+import { FlatList, View } from "react-native";
 import { Surface, Text } from "react-native-paper";
 import { useEffect } from "react";
 import TaskTypeEnum from "@/src/shared/TaskTypeEnum";
@@ -45,7 +45,7 @@ export default function Task() {
         useCallback(() => {
             const fetchData = async () => {
                 const data = await taskService.getTaskById(Number(id));
-                if(data?.status === StatusEnum.ONGOING){
+                if (data?.status === StatusEnum.ONGOING) {
                     setActivateTimer(true);
                 }
                 setData(data);
@@ -57,7 +57,7 @@ export default function Task() {
     const actionHanlder = async (type: TaskTypeEnum) => {
         console.log("actionHanlder", type);
         if (type === TaskTypeEnum.TIME) {
-            const data = await taskService.startTask(Number(id));
+            const data = await taskService.executeTask(Number(id));
             console.log(data);
             setData(data);
             setActivateTimer(!activateTimer);
@@ -84,13 +84,32 @@ export default function Task() {
             <View>
                 <Text>Operation: {data?.operation}</Text>
             </View>
-            <ActionButton task={data} 
-            actionHandler={actionHanlder} 
-            active={activateTimer} />
+            <ActionButton task={data}
+                actionHandler={actionHanlder}
+                active={activateTimer} />
             <Surface style={styles.timerContainer}>
                 <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                     <Text>Time</Text>
                     <Text>{time}</Text>
+                </View>
+            </Surface>
+            <Surface>
+                <View>
+                    <Text variant="headlineSmall">Total credit</Text>
+                    <View>
+                        <Text variant="bodyLarge">45</Text>
+                    </View>
+                </View>
+            </Surface>
+            <Surface>
+                <View>
+                    <Text variant="headlineSmall">History</Text>
+                </View>
+                <View>
+                    <Text>17/04/2025 11:30- Finished</Text>
+                    <Text>17/04/2025 11:00- Started</Text>
+                    <Text>17/04/2025 10:15 - Stoped</Text>
+                    <Text>17/04/2025 10:00- Started</Text>
                 </View>
             </Surface>
         </View>

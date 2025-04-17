@@ -102,13 +102,13 @@ export class TaskServiceImpl implements TaskServiceInterface {
         );
     }
 
-    async startTask(id: number): Promise<TaskOutput | null> {
+    async executeTask(id: number): Promise<TaskOutput | null> {
         const findTask = await this._taskRepository.getTaskById(id);
         if (!findTask) {
             return null;
         }
         let status = StatusEnum.PENDING;
-        if(findTask.status === StatusEnum.PENDING){
+        if (findTask.status === StatusEnum.PENDING) {
             status = StatusEnum.ONGOING;
         } else {
             status = StatusEnum.STOPED;
@@ -137,6 +137,16 @@ export class TaskServiceImpl implements TaskServiceInterface {
         if (!task) {
             return null;
         }
+
+        const taskHistory = {
+            id: 0,
+            task_id: task.id,
+            status: task.status,
+            updated_at: task.updated_at,
+        };
+
+        await this._taskRepository.addTaskHistory(taskHistory);
+
         return new TaskOutput(
             task.id,
             task.task,
