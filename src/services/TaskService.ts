@@ -9,13 +9,13 @@ export class TaskOutput {
         readonly id: number,
         readonly task: string,
         readonly status: StatusEnum,
-        readonly created_at: string,
-        readonly updated_at: string,
+        readonly created_at: Date,
+        readonly updated_at: Date,
         readonly type: TaskTypeEnum,
         readonly operation: OperationEnum,
         readonly tags: string,
         readonly value?: number,
-        readonly deleted_at?: string,
+        readonly deleted_at?: Date,
     ) { }
 
     get createdAt(): string {
@@ -27,6 +27,15 @@ export class TaskOutput {
     }
 
 }
+
+export class TaskHistoryOutput {
+    constructor(
+        readonly id: number,
+        readonly task_id: number,
+        readonly status: string,
+        readonly updated_at: Date,
+    ) { }
+};
 
 export class TaskInput {
     constructor(
@@ -73,8 +82,8 @@ export class TaskServiceImpl implements TaskServiceInterface {
             id: 0,
             task: input.task,
             status: StatusEnum.PENDING,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
+            created_at: new Date(),
+            updated_at: new Date(),
             type: input.type,
             operation: input.operation,
             tags: input.tags,
@@ -100,6 +109,19 @@ export class TaskServiceImpl implements TaskServiceInterface {
             task.value,
             task.deleted_at,
         );
+    }
+
+    async getTaskHistoryByTaskId(taskId: number): Promise<TaskHistoryOutput[] | null> {
+        const taskHistory = await this._taskRepository.getTaskHistoryByTaskId(taskId);
+        if (!taskHistory) {
+            return null;
+        }
+        return taskHistory.map(history => new TaskHistoryOutput(
+            history.id,
+            history.task_id,
+            history.status,
+            history.updated_at,
+        ));
     }
 
     async executeTask(id: number): Promise<TaskOutput | null> {
@@ -131,7 +153,7 @@ export class TaskServiceImpl implements TaskServiceInterface {
         const taskUpdated = {
             ...findTask,
             status: status,
-            updated_at: new Date().toISOString(),
+            updated_at: new Date(),
         };
         const task = await this._taskRepository.updateTask(taskUpdated);
         if (!task) {

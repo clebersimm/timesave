@@ -7,6 +7,9 @@ import { useEffect } from "react";
 import TaskTypeEnum from "@/src/shared/TaskTypeEnum";
 import ActionButton from "@/components/Task/ActionButton";
 import StatusEnum from "@/src/shared/StatusEnum";
+import DetailsData from "@/components/Task/DetailsData";
+import CreditContainer from "@/components/Task/CreditContainer";
+import HistoryContainer from "@/components/Task/HistoryContainer";
 
 export default function Task() {
     const { id } = useLocalSearchParams();
@@ -69,21 +72,7 @@ export default function Task() {
 
     return (
         <View style={styles.container}>
-            <View>
-                <Text>Task: {data?.task}</Text>
-            </View>
-            <View>
-                <Text>Status: {data?.status}</Text>
-            </View>
-            <View>
-                <Text>Created At: {data?.createdAt}</Text>
-            </View>
-            <View>
-                <Text>Type: {data?.type}</Text>
-            </View>
-            <View>
-                <Text>Operation: {data?.operation}</Text>
-            </View>
+            <DetailsData data={data} />
             <ActionButton task={data}
                 actionHandler={actionHanlder}
                 active={activateTimer} />
@@ -93,25 +82,8 @@ export default function Task() {
                     <Text>{time}</Text>
                 </View>
             </Surface>
-            <Surface>
-                <View>
-                    <Text variant="headlineSmall">Total credit</Text>
-                    <View>
-                        <Text variant="bodyLarge">45</Text>
-                    </View>
-                </View>
-            </Surface>
-            <Surface>
-                <View>
-                    <Text variant="headlineSmall">History</Text>
-                </View>
-                <View>
-                    <Text>17/04/2025 11:30- Finished</Text>
-                    <Text>17/04/2025 11:00- Started</Text>
-                    <Text>17/04/2025 10:15 - Stoped</Text>
-                    <Text>17/04/2025 10:00- Started</Text>
-                </View>
-            </Surface>
+            <CreditContainer />
+            <HistoryContainer taskId={data?.id} />
         </View>
     );
 }
@@ -121,6 +93,7 @@ const styles = {
         flex: 1,
         padding: 16,
         backgroundColor: '#fff',
+        gap: 8,
     },
-    timerContainer: { padding: 16, margin: 8, elevation: 4, borderRadius: 8 },
+    timerContainer: { padding: 8, margin: 2, elevation: 2, borderRadius: 8 },
 };

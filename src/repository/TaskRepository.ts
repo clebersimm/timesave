@@ -6,7 +6,7 @@ export default interface TaskRepository {
     deleteTask(id: number): Promise<void>;
     existsTask(id: number): Promise<boolean>;
     addTaskHistory(taskHistory: TaskHistory): Promise<void>;
-    getTaskHistoryByTaskId(taskId: number): Promise<TaskHistory | null>;
+    getTaskHistoryByTaskId(taskId: number): Promise<TaskHistory[] | null>;
 }
 
 export class Task {
@@ -14,12 +14,12 @@ export class Task {
         readonly id: number,
         readonly task: string,
         readonly status: string,
-        readonly created_at: string,
-        readonly updated_at: string,
+        readonly created_at: Date,
+        readonly updated_at: Date,
         readonly type: string,
         readonly operation: string,
         readonly tags: string,
-        readonly deleted_at?: string,
+        readonly deleted_at?: Date,
         readonly value?: number,
     ) { }
 }
@@ -29,6 +29,6 @@ export class TaskHistory {
         readonly id: number,
         readonly task_id: number,
         readonly status: string,
-        readonly updated_at: string,
+        readonly updated_at: Date,
     ) { }
 };
