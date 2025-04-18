@@ -1,7 +1,7 @@
 import { TaskOutput, taskService } from "@/src/services/TaskService";
 import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
-import { FlatList, View } from "react-native";
+import { View } from "react-native";
 import { Surface, Text } from "react-native-paper";
 import { useEffect } from "react";
 import TaskTypeEnum from "@/src/shared/TaskTypeEnum";
@@ -16,6 +16,7 @@ export default function Task() {
     const [data, setData] = useState<TaskOutput | null>(null);
     const [time, setTime] = useState<string>("00:00:00");
     const [activateTimer, setActivateTimer] = useState(false);
+    const [updatedAt, setUpdatedAt] = useState<Date>(new Date());
 
     useEffect(() => {
         if (activateTimer) {
@@ -64,6 +65,7 @@ export default function Task() {
             console.log(data);
             setData(data);
             setActivateTimer(!activateTimer);
+            setUpdatedAt(new Date());
         } else {
             //const data = await taskService.completeTask(Number(id));
             //setData(data);
@@ -82,8 +84,14 @@ export default function Task() {
                     <Text>{time}</Text>
                 </View>
             </Surface>
-            <CreditContainer />
-            <HistoryContainer taskId={data?.id} />
+            <CreditContainer
+                taskId={data?.id}
+                updatedAt={updatedAt}
+            />
+            <HistoryContainer
+                taskId={data?.id}
+                updatedAt={updatedAt}
+            />
         </View>
     );
 }

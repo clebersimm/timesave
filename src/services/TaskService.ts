@@ -35,6 +35,16 @@ export class TaskHistoryOutput {
         readonly status: string,
         readonly updated_at: Date,
     ) { }
+
+    get updatedAt(): string {
+        return new Date(this.updated_at).toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    }
 };
 
 export class TaskInput {
@@ -77,7 +87,6 @@ export class TaskServiceImpl implements TaskServiceInterface {
     }
 
     async addTask(input: TaskInput): Promise<void> {
-        console.log(input);
         const task = {
             id: 0,
             task: input.task,
@@ -112,11 +121,15 @@ export class TaskServiceImpl implements TaskServiceInterface {
     }
 
     async getTaskHistoryByTaskId(taskId: number): Promise<TaskHistoryOutput[] | null> {
+        if (taskId === undefined || taskId === null) {
+            return null;
+        }
         const taskHistory = await this._taskRepository.getTaskHistoryByTaskId(taskId);
         if (!taskHistory) {
             return null;
         }
-        return taskHistory.map(history => new TaskHistoryOutput(
+        const reverseHistory = taskHistory.reverse();
+        return reverseHistory.map(history => new TaskHistoryOutput(
             history.id,
             history.task_id,
             history.status,
@@ -181,6 +194,28 @@ export class TaskServiceImpl implements TaskServiceInterface {
             task.value,
             task.deleted_at,
         );
+    }
+
+    async calculateTaskCredit(id: number): Promise<number | null> {
+        const history = await this.getTaskHistoryByTaskId(id);
+        if (history === null) {
+            return null;
+        }
+        const reverseHistory = history.reverse();
+        console.log("history", reverseHistory);
+        let updateAt: Date = history[0].updated_at;
+        let totalCredit = 0;
+        reverseHistory?.forEach((item) => {
+            if (item.status === StatusEnum.ONGOING) {
+                updateAt = item.updated_at;
+            }
+            if (item.status === StatusEnum.STOPED) {
+                const timeDiff = Math.abs(item.updated_at.getTime() - updateAt.getTime());
+                const diffInMinutes = Math.floor(timeDiff / (1000 * 60));
+                totalCredit += diffInMinutes;
+            }
+        });
+        return totalCredit;
     }
 }
 

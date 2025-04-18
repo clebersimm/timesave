@@ -41,6 +41,9 @@ export class TaskRepositoryImpl implements TaskRepository {
         if (this._taskHistory.length === 0) {
             return null;
         }
+        this._taskHistory = this._taskHistory.sort((a, b) => {
+            return a.updated_at.getTime() - b.updated_at.getTime();
+        });
         return this._taskHistory;
     }
 }
