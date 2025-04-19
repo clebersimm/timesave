@@ -1,38 +1,43 @@
 import { FlatList, View } from "react-native";
 import { TodoTableItem } from "./TodoTableItem";
-import { useCallback, useState } from "react";
+import { useEffect, useState } from "react";
 import { TaskOutput, taskService } from "@/src/services/TaskService";
-import { useFocusEffect } from "expo-router";
 
-export default function TodoTable() {
-    const [data, setData] = useState<TaskOutput[]>([]);
+export interface TodoTableProps {
+  updatedAt: Date;
+}
 
-    useFocusEffect(
-        useCallback(() => {
-            const fetchData = async () => {
-                const data = await taskService.getTasks();
-                setData(data);
-            };
-            fetchData();
-        }, [])
-    );
+export default function TodoTable({ updatedAt }: TodoTableProps) {
+  const [data, setData] = useState<TaskOutput[]>([]);
 
-    const handleIconPress = (key: number) => {
-        console.log('Icon pressed', key);
-    }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const tasks = await taskService.getTasks();
+        setData(tasks);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    };
+    fetchData();
+  }, [updatedAt]); // Fetch data whenever `updatedAt` changes
 
-    return (
-        <>
-            <View style={{ flex: 1, padding: 16 }}>
-                <FlatList data={data}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => (
-                        <TodoTableItem
-                            item={item}
-                            onPress={() => handleIconPress(item.id)}
-                        />
-                    )}>
-                </FlatList>
-            </View>
-        </>);
+  const handleIconPress = (key: number) => {
+    console.log("Icon pressed", key);
+  };
+
+  return (
+    <View style={{ flex: 1, padding: 16 }}>
+      <FlatList
+        data={data}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <TodoTableItem
+            item={item}
+            onPress={() => handleIconPress(item.id)}
+          />
+        )}
+      />
+    </View>
+  );
 }

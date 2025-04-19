@@ -92,6 +92,7 @@ export default function Task() {
                 />
             ),
             visible: ((data?.status !== StatusEnum.COMPLETED) && (data?.type === TaskTypeEnum.TIME)),
+            key: "action",
         },
         {
             component: (
@@ -100,6 +101,7 @@ export default function Task() {
                 />
             ),
             visible: data?.status !== StatusEnum.COMPLETED,
+            key: "complete",
         },
     ];
 
