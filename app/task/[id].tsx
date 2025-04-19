@@ -5,11 +5,12 @@ import { View } from "react-native";
 import { Surface, Text } from "react-native-paper";
 import { useEffect } from "react";
 import TaskTypeEnum from "@/src/shared/TaskTypeEnum";
-import ActionButton from "@/components/Task/ActionButton";
 import StatusEnum from "@/src/shared/StatusEnum";
 import DetailsData from "@/components/Task/DetailsData";
 import CreditContainer from "@/components/Task/CreditContainer";
 import HistoryContainer from "@/components/Task/HistoryContainer";
+import ActionButton from "@/components/Task/ActionButton";
+import CompleteTaskButton from "@/components/Task/CompleteTaskButton";
 
 export default function Task() {
     const { id } = useLocalSearchParams();
@@ -48,22 +49,20 @@ export default function Task() {
     useFocusEffect(
         useCallback(() => {
             const fetchData = async () => {
-                const data = await taskService.getTaskById(Number(id));
-                if (data?.status === StatusEnum.ONGOING) {
+                const output = await taskService.getTaskById(Number(id));
+                if (output?.status === StatusEnum.ONGOING) {
                     setActivateTimer(true);
                 }
-                setData(data);
+                setData(output);
             };
             fetchData();
         }, [id])
     );
 
     const actionHanlder = async (type: TaskTypeEnum) => {
-        console.log("actionHanlder", type);
         if (type === TaskTypeEnum.TIME) {
-            const data = await taskService.executeTask(Number(id));
-            console.log(data);
-            setData(data);
+            const output = await taskService.executeTask(Number(id));
+            setData(output);
             setActivateTimer(!activateTimer);
             setUpdatedAt(new Date());
         } else {
@@ -72,12 +71,30 @@ export default function Task() {
         }
     };
 
-    return (
-        <View style={styles.container}>
-            <DetailsData data={data} />
+    const completeHandler = async () => {
+        if (data?.status === StatusEnum.COMPLETED) {
+            return;
+        }
+        const output = await taskService.completeTask(Number(id));
+        setData(output);
+        setActivateTimer(false);
+        setUpdatedAt(new Date());
+    };
+
+    let actionButton = <></>;
+    if (data?.status !== StatusEnum.COMPLETED) {
+        actionButton = (<>
             <ActionButton task={data}
                 actionHandler={actionHanlder}
                 active={activateTimer} />
+            <CompleteTaskButton actionHandler={completeHandler} />
+        </>);
+    }
+
+    return (
+        <View style={styles.container}>
+            <DetailsData data={data} />
+            {actionButton}
             <Surface style={styles.timerContainer}>
                 <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                     <Text>Time</Text>

@@ -1,6 +1,5 @@
 import { TaskOutput } from "@/src/services/TaskService";
 import TaskTypeEnum from "@/src/shared/TaskTypeEnum";
-import { act } from "react";
 import { View } from "react-native";
 import { Button } from "react-native-paper";
 

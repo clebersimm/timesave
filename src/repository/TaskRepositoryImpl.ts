@@ -1,6 +1,7 @@
 import TaskRepository, { Task, TaskHistory } from "./TaskRepository";
 
 export class TaskRepositoryImpl implements TaskRepository {
+    
 
     private _tasks: Task[] = [];
     private _taskHistory: TaskHistory[] = [];
@@ -46,4 +47,16 @@ export class TaskRepositoryImpl implements TaskRepository {
         });
         return this._taskHistory;
     }
+
+    async findLastTaskHistoryByTaskId(taskId: number): Promise<TaskHistory | null> {
+        this._taskHistory = this._taskHistory.filter(task => task.task_id === taskId);
+        if (this._taskHistory.length === 0) {
+            return null;
+        }
+        this._taskHistory = this._taskHistory.sort((a, b) => {
+            return a.updated_at.getTime() - b.updated_at.getTime();
+        });
+        return this._taskHistory[this._taskHistory.length - 1];
+    }
+
 }

@@ -7,6 +7,7 @@ export default interface TaskRepository {
     existsTask(id: number): Promise<boolean>;
     addTaskHistory(taskHistory: TaskHistory): Promise<void>;
     getTaskHistoryByTaskId(taskId: number): Promise<TaskHistory[] | null>;
+    findLastTaskHistoryByTaskId(taskId: number): Promise<TaskHistory | null>;
 }
 
 export class Task {

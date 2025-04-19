@@ -1,4 +1,4 @@
-import TaskRepository from "../repository/TaskRepository";
+import TaskRepository, { Task } from "../repository/TaskRepository";
 import { TaskRepositoryImpl } from "../repository/TaskRepositoryImpl";
 import OperationEnum, { OperationEnumUtils } from "../shared/OperationEnum";
 import StatusEnum, { StatusEnumUtils } from "../shared/StatusEnum";
@@ -60,6 +60,9 @@ export class TaskInput {
 export interface TaskServiceInterface {
     getTasks(): Promise<TaskOutput[]>;
     addTask(input: TaskInput): Promise<void>;
+    getTaskById(id: number): Promise<TaskOutput | null>;
+    getTaskHistoryByTaskId(taskId: number): Promise<TaskHistoryOutput[] | null>;
+    completeTask(id: number): Promise<TaskOutput | null>;
 }
 
 export class TaskServiceImpl implements TaskServiceInterface {
@@ -163,25 +166,10 @@ export class TaskServiceImpl implements TaskServiceInterface {
                 break;
         }
 
-        const taskUpdated = {
-            ...findTask,
-            status: status,
-            updated_at: new Date(),
-        };
-        const task = await this._taskRepository.updateTask(taskUpdated);
+        const task = await this._updateTask(findTask, status);
         if (!task) {
             return null;
         }
-
-        const taskHistory = {
-            id: 0,
-            task_id: task.id,
-            status: task.status,
-            updated_at: task.updated_at,
-        };
-
-        await this._taskRepository.addTaskHistory(taskHistory);
-
         return new TaskOutput(
             task.id,
             task.task,
@@ -194,6 +182,28 @@ export class TaskServiceImpl implements TaskServiceInterface {
             task.value,
             task.deleted_at,
         );
+    }
+
+    async _updateTask(task: Task, status: StatusEnum): Promise<Task | null> {
+        const taskUpdated = {
+            ...task,
+            status: status,
+            updated_at: new Date(),
+        };
+        const output = await this._taskRepository.updateTask(taskUpdated);
+        if (!task) {
+            return null;
+        }
+
+        const taskHistory = {
+            id: output.id,
+            task_id: output.id,
+            status: output.status,
+            updated_at: output.updated_at,
+        };
+
+        await this._taskRepository.addTaskHistory(taskHistory);
+        return output;
     }
 
     async calculateTaskCredit(id: number): Promise<number | null> {
@@ -216,6 +226,76 @@ export class TaskServiceImpl implements TaskServiceInterface {
             }
         });
         return totalCredit;
+    }
+    async completeTask(id: number): Promise<TaskOutput | null> {
+        const task = await this._taskRepository.getTaskById(id);
+        if (!task) {
+            return null;
+        }
+        if (task.status === StatusEnum.COMPLETED) {
+            return new TaskOutput(
+                task.id,
+                task.task,
+                StatusEnumUtils.getStatusEnum(task.status) ?? StatusEnum.PENDING,
+                task.created_at,
+                task.updated_at,
+                TaskTypeEnumUtils.getTaskTypeEnum(task.type) ?? TaskTypeEnum.TIME,
+                OperationEnumUtils.getOperationEnum(task.operation) ?? OperationEnum.CREDIT,
+                task.tags,
+                task.value,
+                task.deleted_at,
+            );;
+        }
+
+        const lastHistory = await this._taskRepository.findLastTaskHistoryByTaskId(id);
+        const completedDate = new Date();
+        if (lastHistory && lastHistory.status !== StatusEnum.STOPED) {
+            console.log("lastHistory", lastHistory);
+            const taskUpdated = {
+                ...task,
+                status: StatusEnum.STOPED,
+                updated_at: completedDate,
+            };
+            const taskHistory = {
+                id: taskUpdated.id,
+                task_id: taskUpdated.id,
+                status: taskUpdated.status,
+                updated_at: taskUpdated.updated_at,
+            };
+
+            await this._taskRepository.addTaskHistory(taskHistory);
+        }
+
+        const taskUpdated = {
+            ...task,
+            status: StatusEnum.COMPLETED,
+            updated_at: completedDate,
+        };
+        const output = await this._taskRepository.updateTask(taskUpdated);
+        if (!output) {
+            return null;
+        }
+
+        const taskHistory = {
+            id: output.id,
+            task_id: output.id,
+            status: output.status,
+            updated_at: output.updated_at,
+        };
+
+        await this._taskRepository.addTaskHistory(taskHistory);
+        return new TaskOutput(
+            output.id,
+            output.task,
+            StatusEnumUtils.getStatusEnum(output.status) ?? StatusEnum.PENDING,
+            output.created_at,
+            output.updated_at,
+            TaskTypeEnumUtils.getTaskTypeEnum(output.type) ?? TaskTypeEnum.TIME,
+            OperationEnumUtils.getOperationEnum(output.operation) ?? OperationEnum.CREDIT,
+            output.tags,
+            output.value,
+            output.deleted_at,
+        );
     }
 }
 
