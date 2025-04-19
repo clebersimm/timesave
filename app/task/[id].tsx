@@ -54,6 +54,7 @@ export default function Task() {
                     setActivateTimer(true);
                 }
                 setData(output);
+                setUpdatedAt(new Date());
             };
             fetchData();
         }, [id])
@@ -81,20 +82,35 @@ export default function Task() {
         setUpdatedAt(new Date());
     };
 
-    let actionButton = <></>;
-    if (data?.status !== StatusEnum.COMPLETED) {
-        actionButton = (<>
-            <ActionButton task={data}
-                actionHandler={actionHanlder}
-                active={activateTimer} />
-            <CompleteTaskButton actionHandler={completeHandler} />
-        </>);
-    }
+    const buttons = [
+        {
+            component: (
+                <ActionButton
+                    task={data}
+                    actionHandler={actionHanlder}
+                    active={activateTimer}
+                />
+            ),
+            visible: ((data?.status !== StatusEnum.COMPLETED) && (data?.type === TaskTypeEnum.TIME)),
+        },
+        {
+            component: (
+                <CompleteTaskButton
+                    actionHandler={completeHandler}
+                />
+            ),
+            visible: data?.status !== StatusEnum.COMPLETED,
+        },
+    ];
+
+    const visibleButtons = buttons
+        .filter(button => button.visible)
+        .map(button => button.component);
 
     return (
         <View style={styles.container}>
             <DetailsData data={data} />
-            {actionButton}
+            {visibleButtons}
             <Surface style={styles.timerContainer}>
                 <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                     <Text>Time</Text>

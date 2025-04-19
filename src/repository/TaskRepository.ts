@@ -8,6 +8,7 @@ export default interface TaskRepository {
     addTaskHistory(taskHistory: TaskHistory): Promise<void>;
     getTaskHistoryByTaskId(taskId: number): Promise<TaskHistory[] | null>;
     findLastTaskHistoryByTaskId(taskId: number): Promise<TaskHistory | null>;
+    getTotalCredit(): Promise<number>;
 }
 
 export class Task {

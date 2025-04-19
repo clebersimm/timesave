@@ -63,6 +63,7 @@ export interface TaskServiceInterface {
     getTaskById(id: number): Promise<TaskOutput | null>;
     getTaskHistoryByTaskId(taskId: number): Promise<TaskHistoryOutput[] | null>;
     completeTask(id: number): Promise<TaskOutput | null>;
+    getTotalCredit(): Promise<number>;
 }
 
 export class TaskServiceImpl implements TaskServiceInterface {
@@ -207,12 +208,15 @@ export class TaskServiceImpl implements TaskServiceInterface {
     }
 
     async calculateTaskCredit(id: number): Promise<number | null> {
+        const task = await this._taskRepository.getTaskById(id);
+        if (task?.type === TaskTypeEnum.ACTION) {
+            return task.value ?? 0;
+        }
         const history = await this.getTaskHistoryByTaskId(id);
         if (history === null) {
             return null;
         }
         const reverseHistory = history.reverse();
-        console.log("history", reverseHistory);
         let updateAt: Date = history[0].updated_at;
         let totalCredit = 0;
         reverseHistory?.forEach((item) => {
@@ -265,11 +269,15 @@ export class TaskServiceImpl implements TaskServiceInterface {
 
             await this._taskRepository.addTaskHistory(taskHistory);
         }
-
+        let value = task.value;
+        if (task.type === TaskTypeEnum.ACTION) {
+            value = await this.calculateTaskCredit(id) ?? 0;
+        }
         const taskUpdated = {
             ...task,
             status: StatusEnum.COMPLETED,
             updated_at: completedDate,
+            value: value,
         };
         const output = await this._taskRepository.updateTask(taskUpdated);
         if (!output) {
@@ -297,6 +305,11 @@ export class TaskServiceImpl implements TaskServiceInterface {
             output.deleted_at,
         );
     }
+
+    async getTotalCredit(): Promise<number> {
+        return await this._taskRepository.getTotalCredit();
+    }
+
 }
 
 export const taskService = new TaskServiceImpl();

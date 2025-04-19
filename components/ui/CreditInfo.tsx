@@ -1,12 +1,32 @@
 import { Text } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
+import { useEffect, useState } from "react";
+import { taskService } from "@/src/services/TaskService";
 
 export default function CreditInfo() {
+
+    const [data, setData] = useState({
+        credit: 0,
+    });
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const output = await taskService.getTotalCredit();
+                setData({ credit: output });
+            } catch (error) {
+                console.error("Error fetching credit data:", error);
+            }
+        };
+        console.log("Fetching data...");
+        fetchData();
+    }, []);
+
     return (
         <View style={style.container}>
             <View style={style.box}>
                 <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Crédito</Text>
-                <Text>55</Text>
+                <Text>{data.credit}</Text>
             </View>
             <View style={style.box}>
                 <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Débitos</Text>
@@ -20,7 +40,7 @@ const style = StyleSheet.create({
     container: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        margin: 10,        
+        margin: 10,
     },
     box: {
         alignItems: 'center',

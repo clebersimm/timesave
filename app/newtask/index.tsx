@@ -75,6 +75,8 @@ export default function NewTask(this: any) {
             textInputConfig={{
                 label: "Value ",
                 placeholder: "Add a value",
+                keyboardType: "numeric",
+                mode: "outlined",
                 value: inputForm.value !== undefined ? String(inputForm.value) : undefined,
                 onChangeText: inputChagedHandler.bind(this, "value"),
             }}

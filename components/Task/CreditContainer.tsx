@@ -15,14 +15,15 @@ export default function CreditContainer({ taskId, updatedAt }: CreditContainerPr
             if (taskId === undefined || taskId === null) {
                 return;
             }
-            const data = await taskService.calculateTaskCredit(taskId);
-            if (!data) {
+            const output = await taskService.calculateTaskCredit(taskId);
+            if (!output) {
                 return;
             }
-            setData(data);
+            setData(output);
         };
         fetchData();
     }, [updatedAt]);
+
 
     return (
         <Surface style={styles.creditContainer}>

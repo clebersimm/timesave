@@ -12,7 +12,6 @@ export default function HistoryContainer({ taskId, updatedAt }: HistoryContainer
     const [data, setData] = useState<TaskHistoryOutput[]>([]);
     useEffect(() => {
         const fetchData = async () => {
-
             if(taskId === undefined || taskId === null) {
                 return; 
             }

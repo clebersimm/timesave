@@ -1,7 +1,7 @@
 import TaskRepository, { Task, TaskHistory } from "./TaskRepository";
 
 export class TaskRepositoryImpl implements TaskRepository {
-    
+
 
     private _tasks: Task[] = [];
     private _taskHistory: TaskHistory[] = [];
@@ -57,6 +57,21 @@ export class TaskRepositoryImpl implements TaskRepository {
             return a.updated_at.getTime() - b.updated_at.getTime();
         });
         return this._taskHistory[this._taskHistory.length - 1];
+    }
+
+    async getTotalCredit(): Promise<number> {
+        this._tasks = this._tasks.filter(task => task.type === "CREDIT");
+        if (this._tasks.length === 0) {
+            return 0;
+        }
+        let total = 0;
+        this._tasks.forEach(task => {
+            if (task.value) {
+                total += task.value;
+            }
+        }
+        );
+        return total;
     }
 
 }
