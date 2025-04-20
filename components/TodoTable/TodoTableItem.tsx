@@ -1,10 +1,7 @@
 import { Link } from "expo-router";
 import { List } from "react-native-paper";
 import ActionButton from "./ActionButton";
-import StatusEnum from "@/src/shared/StatusEnum";
 import { TaskOutput } from "@/src/services/TaskService";
-import { View } from "react-native";
-
 
 export interface TodoTableItemProps {
     item: TaskOutput,
@@ -13,7 +10,6 @@ export interface TodoTableItemProps {
 
 export function TodoTableItem({ item, onPress }: TodoTableItemProps) {
     return (
-
         <Link href={{
             pathname: '/task/[id]',
             params: { id: item.id }

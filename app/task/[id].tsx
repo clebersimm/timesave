@@ -1,6 +1,5 @@
-import { TaskOutput, taskService } from "@/src/services/TaskService";
-import { useFocusEffect, useLocalSearchParams } from "expo-router";
-import { useCallback, useState } from "react";
+import { useLocalSearchParams } from "expo-router";
+import { useState } from "react";
 import { View } from "react-native";
 import { Surface, Text } from "react-native-paper";
 import { useEffect } from "react";
@@ -11,13 +10,13 @@ import CreditContainer from "@/components/Task/CreditContainer";
 import HistoryContainer from "@/components/Task/HistoryContainer";
 import ActionButton from "@/components/Task/ActionButton";
 import CompleteTaskButton from "@/components/Task/CompleteTaskButton";
+import { useTaskContext } from "@/src/context/TaskContext";
 
 export default function Task() {
     const { id } = useLocalSearchParams();
-    const [data, setData] = useState<TaskOutput | null>(null);
     const [time, setTime] = useState<string>("00:00:00");
     const [activateTimer, setActivateTimer] = useState(false);
-    const [updatedAt, setUpdatedAt] = useState<Date>(new Date());
+    const { getTaskById, task, executeTask, completeTask } = useTaskContext();
 
     useEffect(() => {
         if (activateTimer) {
@@ -46,26 +45,26 @@ export default function Task() {
         }
     }, [activateTimer]);
 
-    useFocusEffect(
-        useCallback(() => {
-            const fetchData = async () => {
-                const output = await taskService.getTaskById(Number(id));
-                if (output?.status === StatusEnum.ONGOING) {
-                    setActivateTimer(true);
-                }
-                setData(output);
-                setUpdatedAt(new Date());
-            };
-            fetchData();
-        }, [id])
-    );
+    useEffect(() => {
+        _getTaskById();
+    }, [id]);
+
+    useEffect(() => {
+        if (task?.status === StatusEnum.ONGOING) {
+            setActivateTimer(true);
+        } else {
+            setActivateTimer(false);
+        }
+    }, [task]);
+
+    const _getTaskById = async () => {
+        await getTaskById(Number(id));
+    }
 
     const actionHanlder = async (type: TaskTypeEnum) => {
         if (type === TaskTypeEnum.TIME) {
-            const output = await taskService.executeTask(Number(id));
-            setData(output);
+            await executeTask(Number(id));
             setActivateTimer(!activateTimer);
-            setUpdatedAt(new Date());
         } else {
             //const data = await taskService.completeTask(Number(id));
             //setData(data);
@@ -73,35 +72,41 @@ export default function Task() {
     };
 
     const completeHandler = async () => {
-        if (data?.status === StatusEnum.COMPLETED) {
+        if (task?.status === StatusEnum.COMPLETED) {
             return;
         }
-        const output = await taskService.completeTask(Number(id));
-        setData(output);
+        await completeTask(Number(id));
         setActivateTimer(false);
-        setUpdatedAt(new Date());
+
     };
+
+    const _createHashKey = (taskId: number | undefined) => {
+        return taskId?.toString() + Math.random().toString();
+    }
+        
 
     const buttons = [
         {
             component: (
                 <ActionButton
-                    task={data}
+                    key={_createHashKey(task?.id)+"action"}
+                    task={task}
                     actionHandler={actionHanlder}
                     active={activateTimer}
                 />
             ),
-            visible: ((data?.status !== StatusEnum.COMPLETED) && (data?.type === TaskTypeEnum.TIME)),
-            key: "action",
+            visible: ((task?.status !== StatusEnum.COMPLETED) && (task?.type === TaskTypeEnum.TIME)),
+            key: _createHashKey(task?.id),
         },
         {
             component: (
                 <CompleteTaskButton
+                    key={_createHashKey(task?.id)+"complete"}
                     actionHandler={completeHandler}
                 />
             ),
-            visible: data?.status !== StatusEnum.COMPLETED,
-            key: "complete",
+            visible: task?.status !== StatusEnum.COMPLETED,
+            key: _createHashKey(task?.id),
         },
     ];
 
@@ -110,8 +115,8 @@ export default function Task() {
         .map(button => button.component);
 
     return (
-        <View style={styles.container}>
-            <DetailsData data={data} />
+        <View style={styles.container} key={task?.id}>
+            <DetailsData data={task} key="detailsData" />
             {visibleButtons}
             <Surface style={styles.timerContainer}>
                 <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
@@ -120,12 +125,10 @@ export default function Task() {
                 </View>
             </Surface>
             <CreditContainer
-                taskId={data?.id}
-                updatedAt={updatedAt}
-            />
+                taskId={task?.id}
+            />            
             <HistoryContainer
-                taskId={data?.id}
-                updatedAt={updatedAt}
+                taskId={task?.id}
             />
         </View>
     );

@@ -3,7 +3,8 @@ import NewTaskHeader from "@/components/NewTask/Header";
 import NewTaskTextInput from "@/components/NewTask/NewTaskTextInput";
 import OperationInput from "@/components/NewTask/OperationInput";
 import TaskTypeInput from "@/components/NewTask/TaskTypeInput";
-import { taskService } from "@/src/services/TaskService";
+import { useTaskContext } from "@/src/context/TaskContext";
+import { TaskInput } from "@/src/services/TaskService";
 import OperationEnum from "@/src/shared/OperationEnum";
 import TaskTypeEnum from "@/src/shared/TaskTypeEnum";
 import { useRouter } from "expo-router";
@@ -20,6 +21,7 @@ export type TaksForm = {
 }
 
 export default function NewTask(this: any) {
+    const { addTask } = useTaskContext();
     const [inputForm, setInputForm] = useState<TaksForm>({
         task: "",
         tags: "",
@@ -49,14 +51,14 @@ export default function NewTask(this: any) {
     }
     async function submitHandler() {
         setShowLoading(true);
-        const service = taskService;
-        await service.addTask({
-            task: inputForm.task,
-            type: inputForm.type,
-            operation: inputForm.operation,
-            value: inputForm.value,
-            tags: inputForm.tags,
-        });
+        const input = new TaskInput(
+            inputForm.task,
+            inputForm.type,
+            inputForm.operation,
+            inputForm.tags,
+            inputForm.value,
+        );
+        await addTask(input);
         setShowLoading(false);
         _returnToPreviousScreen();
     }

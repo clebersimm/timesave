@@ -1,27 +1,18 @@
-import React, { useCallback, useState } from "react";
+import React from "react";
 import { StyleSheet, View } from "react-native";
 import CreditInfo from "../../components/ui/CreditInfo";
 import TodoTable from "../../components/TodoTable/TodoTable";
 import FabNewActivity from "../../components/FabNewActivity";
-import { useFocusEffect } from "expo-router";
 
 export default function Index() {
-  const [updatedAt, setUpdatedAt] = useState(new Date());
-
-  // Update `updatedAt` whenever the screen comes into focus
-  useFocusEffect(
-    useCallback(() => {
-      setUpdatedAt(new Date());
-    }, [])
-  );
 
   return (
     <View style={{ flex: 1 }}>
       <View style={style.headerContainer}>
-        <CreditInfo updatedAt={updatedAt} />
+        <CreditInfo />
       </View>
       <View style={style.contentContainer}>
-        <TodoTable updatedAt={updatedAt} />
+        <TodoTable />
       </View>
       <FabNewActivity />
     </View>

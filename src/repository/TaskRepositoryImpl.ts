@@ -1,26 +1,32 @@
+import OperationEnum from "../shared/OperationEnum";
+import TaskTypeEnum from "../shared/TaskTypeEnum";
 import TaskRepository, { Task, TaskHistory } from "./TaskRepository";
 
 export class TaskRepositoryImpl implements TaskRepository {
 
 
-    private _tasks: Task[] = [];
+    private _tasks: Task[] = [
+        new Task(1, "Task 1", "Pending", new Date(), new Date(), TaskTypeEnum.TIME, OperationEnum.CREDIT, "work", undefined, undefined),
+    ];
     private _taskHistory: TaskHistory[] = [];
 
     async getTasks(): Promise<Task[]> {
         return this._tasks;
     }
     async getTaskById(id: number): Promise<Task | null> {
-        this._tasks = this._tasks.filter(task => task.id === id);
+        this._tasks = this._tasks.filter(task => task.getId === id);
         if (this._tasks.length === 0) {
             return null;
         }
         return this._tasks[0];
     }
-    async addTask(task: Task): Promise<void> {
+    async addTask(task: Task): Promise<number> {
+        task.setId = this._tasks.length + 1;
         this._tasks.push(task);
+        return task.getId;
     }
     async updateTask(task: Task): Promise<Task> {
-        this._tasks = this._tasks.filter(t => t.id !== task.id);
+        this._tasks = this._tasks.filter(t => t.getId !== task.getId);
         this._tasks.push(task);
         return task;
     }
@@ -28,7 +34,7 @@ export class TaskRepositoryImpl implements TaskRepository {
         throw new Error("Method not implemented.");
     }
     async existsTask(id: number): Promise<boolean> {
-        this._tasks = this._tasks.filter(task => task.id === id);
+        this._tasks = this._tasks.filter(task => task.getId === id);
         if (this._tasks.length === 0) {
             return false;
         }
@@ -60,7 +66,7 @@ export class TaskRepositoryImpl implements TaskRepository {
     }
 
     async getTotalCredit(): Promise<number> {
-        this._tasks = this._tasks.filter(task => task.type === "CREDIT");
+        this._tasks = this._tasks.filter(task => task.operation === OperationEnum.CREDIT);
         if (this._tasks.length === 0) {
             return 0;
         }

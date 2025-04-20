@@ -1,28 +1,21 @@
-import { TaskHistoryOutput, taskService } from "@/src/services/TaskService";
-import { useEffect, useState } from "react";
+import { useTaskContext } from "@/src/context/TaskContext";
+import { useEffect } from "react";
 import { FlatList, View } from "react-native";
 import { Surface, Text } from "react-native-paper";
 
+
 export interface HistoryContainerProps {
     taskId: number | undefined;
-    updatedAt: Date;
 };
 
-export default function HistoryContainer({ taskId, updatedAt }: HistoryContainerProps) {
-    const [data, setData] = useState<TaskHistoryOutput[]>([]);
+export default function HistoryContainer({ taskId }: HistoryContainerProps) {
+    const { getTaskHistoryByTaskId, taskHistory } = useTaskContext();
     useEffect(() => {
-        const fetchData = async () => {
-            if(taskId === undefined || taskId === null) {
-                return; 
-            }
-            const data = await taskService.getTaskHistoryByTaskId(taskId);
-            if (!data) {
-                return;
-            }
-            setData(data);
-        };
-        fetchData();
-    }, [updatedAt]);
+        if (taskId === undefined) {
+            return;
+        }
+        getTaskHistoryByTaskId(taskId);
+    }, [taskId]);
 
 
     return (
@@ -32,7 +25,7 @@ export default function HistoryContainer({ taskId, updatedAt }: HistoryContainer
             </View>
             <View style={{ flexDirection: "column", gap: 8 }}>
                 <FlatList
-                    data={data}
+                    data={taskHistory}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
                         <Text>{`${item.updatedAt} - ${item.status}`}</Text>

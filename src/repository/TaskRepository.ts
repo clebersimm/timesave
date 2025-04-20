@@ -1,7 +1,10 @@
+import OperationEnum from "../shared/OperationEnum";
+import TaskTypeEnum from "../shared/TaskTypeEnum";
+
 export default interface TaskRepository {
     getTasks(): Promise<Task[]>;
     getTaskById(id: number): Promise<Task | null>;
-    addTask(task: Task): Promise<void>;
+    addTask(task: Task): Promise<number>;
     updateTask(task: Task): Promise<Task>;
     deleteTask(id: number): Promise<void>;
     existsTask(id: number): Promise<boolean>;
@@ -12,18 +15,28 @@ export default interface TaskRepository {
 }
 
 export class Task {
+    private _id: number;
     constructor(
-        readonly id: number,
+        id: number = 0,
         readonly task: string,
         readonly status: string,
         readonly created_at: Date,
         readonly updated_at: Date,
-        readonly type: string,
-        readonly operation: string,
+        readonly type: TaskTypeEnum,
+        readonly operation: OperationEnum,
         readonly tags: string,
-        readonly deleted_at?: Date,
         readonly value?: number,
-    ) { }
+        readonly deleted_at?: Date,
+    ) {
+        this._id = id;
+    }
+
+    get getId(): number {
+        return this._id;
+    }
+    set setId(value: number) {
+        this._id = value;
+    }
 }
 
 export class TaskHistory {

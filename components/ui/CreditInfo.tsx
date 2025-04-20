@@ -1,34 +1,15 @@
 import { Text } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
-import { useEffect, useState } from "react";
-import { taskService } from "@/src/services/TaskService";
+import { useTaskContext } from "@/src/context/TaskContext";
 
-export interface CreditInfoProps {
-  updatedAt: Date;
-}
-
-export default function CreditInfo({ updatedAt }: CreditInfoProps) {
-  const [data, setData] = useState({
-    credit: 0,
-  });
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const output = await taskService.getTotalCredit();
-        setData({ credit: output });
-      } catch (error) {
-        console.error("Error fetching credit data:", error);
-      }
-    };
-    fetchData();
-  }, [updatedAt]); // Fetch data whenever `updatedAt` changes
+export default function CreditInfo() {
+  const { totalCredit } = useTaskContext();
 
   return (
     <View style={style.container}>
       <View style={style.box}>
         <Text style={{ fontWeight: "bold", fontSize: 18 }}>Crédito</Text>
-        <Text>{data.credit}</Text>
+        <Text>{totalCredit}</Text>
       </View>
       <View style={style.box}>
         <Text style={{ fontWeight: "bold", fontSize: 18 }}>Débitos</Text>

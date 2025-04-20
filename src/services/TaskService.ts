@@ -1,3 +1,4 @@
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import TaskRepository, { Task } from "../repository/TaskRepository";
 import { TaskRepositoryImpl } from "../repository/TaskRepositoryImpl";
 import OperationEnum, { OperationEnumUtils } from "../shared/OperationEnum";
@@ -59,7 +60,7 @@ export class TaskInput {
 
 export interface TaskServiceInterface {
     getTasks(): Promise<TaskOutput[]>;
-    addTask(input: TaskInput): Promise<void>;
+    addTask(input: TaskInput): Promise<TaskOutput | null>;
     getTaskById(id: number): Promise<TaskOutput | null>;
     getTaskHistoryByTaskId(taskId: number): Promise<TaskHistoryOutput[] | null>;
     completeTask(id: number): Promise<TaskOutput | null>;
@@ -77,7 +78,7 @@ export class TaskServiceImpl implements TaskServiceInterface {
     async getTasks(): Promise<TaskOutput[]> {
         const tasks = await this._taskRepository.getTasks();
         return tasks.map(task => new TaskOutput(
-            task.id,
+            task.getId,
             task.task,
             StatusEnumUtils.getStatusEnum(task.status) ?? StatusEnum.PENDING,
             task.created_at,
@@ -90,19 +91,34 @@ export class TaskServiceImpl implements TaskServiceInterface {
         ));
     }
 
-    async addTask(input: TaskInput): Promise<void> {
-        const task = {
-            id: 0,
-            task: input.task,
-            status: StatusEnum.PENDING,
-            created_at: new Date(),
-            updated_at: new Date(),
-            type: input.type,
-            operation: input.operation,
-            tags: input.tags,
-            value: input.value,
-        };
-        await this._taskRepository.addTask(task);
+    async addTask(input: TaskInput): Promise<TaskOutput | null> {
+        const task = new Task(
+            0,
+            input.task,
+            StatusEnum.PENDING,
+            new Date(),
+            new Date(),
+            input.type,
+            input.operation,
+            input.tags,
+            input.value,
+        );
+        const taskId = await this._taskRepository.addTask(task);
+
+        const newTaskOutput = new TaskOutput(
+            taskId,
+            task.task,
+            StatusEnumUtils.getStatusEnum(task.status) ?? StatusEnum.PENDING,
+            task.created_at,
+            task.updated_at,
+            TaskTypeEnumUtils.getTaskTypeEnum(task.type) ?? TaskTypeEnum.TIME,
+            OperationEnumUtils.getOperationEnum(task.operation) ?? OperationEnum.CREDIT,
+            task.tags,
+            task.value
+        );
+
+        return newTaskOutput;
+
     }
 
     async getTaskById(id: number): Promise<TaskOutput | null> {
@@ -111,7 +127,7 @@ export class TaskServiceImpl implements TaskServiceInterface {
             return null;
         }
         return new TaskOutput(
-            task.id,
+            task.getId,
             task.task,
             StatusEnumUtils.getStatusEnum(task.status) ?? StatusEnum.PENDING,
             task.created_at,
@@ -172,7 +188,7 @@ export class TaskServiceImpl implements TaskServiceInterface {
             return null;
         }
         return new TaskOutput(
-            task.id,
+            task.getId,
             task.task,
             StatusEnumUtils.getStatusEnum(task.status) ?? StatusEnum.PENDING,
             task.created_at,
@@ -186,19 +202,28 @@ export class TaskServiceImpl implements TaskServiceInterface {
     }
 
     async _updateTask(task: Task, status: StatusEnum): Promise<Task | null> {
-        const taskUpdated = {
-            ...task,
-            status: status,
-            updated_at: new Date(),
-        };
+
+        const taskUpdated = new Task(
+            task.getId,
+            task.task,
+            status,
+            task.created_at,
+            new Date(),
+            task.type,
+            task.operation,
+            task.tags,
+            task.value,
+            task.deleted_at,
+        );
+
         const output = await this._taskRepository.updateTask(taskUpdated);
         if (!task) {
             return null;
         }
 
         const taskHistory = {
-            id: output.id,
-            task_id: output.id,
+            id: output.getId,
+            task_id: output.getId,
             status: output.status,
             updated_at: output.updated_at,
         };
@@ -233,12 +258,13 @@ export class TaskServiceImpl implements TaskServiceInterface {
     }
     async completeTask(id: number): Promise<TaskOutput | null> {
         const task = await this._taskRepository.getTaskById(id);
+
         if (!task) {
             return null;
         }
         if (task.status === StatusEnum.COMPLETED) {
             return new TaskOutput(
-                task.id,
+                task.getId,
                 task.task,
                 StatusEnumUtils.getStatusEnum(task.status) ?? StatusEnum.PENDING,
                 task.created_at,
@@ -254,11 +280,11 @@ export class TaskServiceImpl implements TaskServiceInterface {
         const lastHistory = await this._taskRepository.findLastTaskHistoryByTaskId(id);
         const completedDate = new Date();
         if (lastHistory && lastHistory.status !== StatusEnum.STOPED) {
-            console.log("lastHistory", lastHistory);
             const taskUpdated = {
                 ...task,
                 status: StatusEnum.STOPED,
                 updated_at: completedDate,
+                id: task.getId
             };
             const taskHistory = {
                 id: taskUpdated.id,
@@ -270,30 +296,38 @@ export class TaskServiceImpl implements TaskServiceInterface {
             await this._taskRepository.addTaskHistory(taskHistory);
         }
         let value = task.value;
-        if (task.type === TaskTypeEnum.ACTION) {
+        if (task.type === TaskTypeEnum.TIME) {
             value = await this.calculateTaskCredit(id) ?? 0;
         }
-        const taskUpdated = {
-            ...task,
-            status: StatusEnum.COMPLETED,
-            updated_at: completedDate,
-            value: value,
-        };
+
+        const taskUpdated = new Task(
+            task.getId,
+            task.task,
+            StatusEnum.COMPLETED,
+            task.created_at,
+            completedDate,
+            task.type,
+            task.operation,
+            task.tags,
+            value,
+            task.deleted_at,
+        );
+
         const output = await this._taskRepository.updateTask(taskUpdated);
         if (!output) {
             return null;
         }
 
         const taskHistory = {
-            id: output.id,
-            task_id: output.id,
+            id: output.getId,
+            task_id: output.getId,
             status: output.status,
             updated_at: output.updated_at,
         };
 
         await this._taskRepository.addTaskHistory(taskHistory);
         return new TaskOutput(
-            output.id,
+            output.getId,
             output.task,
             StatusEnumUtils.getStatusEnum(output.status) ?? StatusEnum.PENDING,
             output.created_at,

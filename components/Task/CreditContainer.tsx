@@ -1,36 +1,27 @@
-import { taskService } from "@/src/services/TaskService";
-import { useEffect, useState } from "react";
+import { useTaskContext } from "@/src/context/TaskContext";
+import { useEffect } from "react";
 import { View } from "react-native";
 import { Surface, Text } from "react-native-paper";
 
 export interface CreditContainerProps {
     taskId: number | undefined;
-    updatedAt: Date;
 }
 
-export default function CreditContainer({ taskId, updatedAt }: CreditContainerProps) {
-    const [data, setData] = useState<number>(0);
+export default function CreditContainer({ taskId }: CreditContainerProps) {
+    const { calculateTaskCredit, taskCredit } = useTaskContext();
     useEffect(() => {
-        const fetchData = async () => {
-            if (taskId === undefined || taskId === null) {
-                return;
-            }
-            const output = await taskService.calculateTaskCredit(taskId);
-            if (!output) {
-                return;
-            }
-            setData(output);
-        };
-        fetchData();
-    }, [updatedAt]);
-
+        if (taskId === undefined) {
+            return;
+        }
+        calculateTaskCredit(taskId);
+    }, [taskId]);
 
     return (
         <Surface style={styles.creditContainer}>
             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                 <Text variant="headlineSmall">Total credit</Text>
                 <View>
-                    <Text variant="bodyLarge">{data}</Text>
+                    <Text variant="bodyLarge">{taskCredit}</Text>
                 </View>
             </View>
         </Surface>
