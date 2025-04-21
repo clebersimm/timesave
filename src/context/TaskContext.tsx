@@ -19,7 +19,7 @@ interface TaskContextProps {
     totalDebit: number;
     getTotalDebit: () => Promise<void>;
     fetchCompletedTasks: () => Promise<void>;
-
+    deleteTask: (taskId: number) => Promise<void>;
 }
 
 const TaskContext = React.createContext<TaskContextProps | undefined>(undefined);
@@ -129,12 +129,17 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ]);
     }
 
+    const deleteTask = async (taskId: number) => {
+        await taskService.deleteTask(Number(taskId));
+        await fetchTasks();
+    }
+
     const completeTask = async (taskId: number) => {
         const output = await taskService.completeTask(Number(taskId));
         if (!output) {
             throw new Error("Failed to complete task");
         }
-        Promise.all([
+        await Promise.all([
             getTaskById(taskId),
             calculateTaskCredit(taskId),
             getTotalCredit(),
@@ -150,7 +155,26 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
         getTotalDebit();
     }, []);
 
-    const value = { tasks, fetchTasks, addTask, getTotalCredit, totalCredit, getTaskById, task, executeTask, completeTask, getTaskHistoryByTaskId, taskHistory, taskCredit, calculateTaskCredit, totalDebit, getTotalDebit, completedTasks, fetchCompletedTasks };
+    const value = {
+        tasks,
+        fetchTasks,
+        addTask,
+        getTotalCredit,
+        totalCredit,
+        getTaskById,
+        task,
+        executeTask,
+        completeTask,
+        getTaskHistoryByTaskId,
+        taskHistory,
+        taskCredit,
+        calculateTaskCredit,
+        totalDebit,
+        getTotalDebit,
+        completedTasks,
+        fetchCompletedTasks,
+        deleteTask
+    };
 
     return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;
 }

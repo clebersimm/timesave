@@ -14,6 +14,7 @@ export default interface TaskRepository {
     findLastTaskHistoryByTaskId(taskId: number): Promise<TaskHistory | null>;
     getTotalCredit(operation: OperationEnum): Promise<number>;
     getCompletedTasks(): Promise<Task[]>;
+    deleteTask(taskId: number): Promise<void>;
 }
 
 export class Task {

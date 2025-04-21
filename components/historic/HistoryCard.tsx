@@ -1,6 +1,6 @@
 import { TaskOutput } from "@/src/services/TaskService";
 import { View } from "react-native";
-import { Text } from "react-native-paper";
+import { Card, Text } from "react-native-paper";
 
 export interface HistoryCardProps {
     task: TaskOutput;
@@ -8,22 +8,23 @@ export interface HistoryCardProps {
 
 export function HistoryCard({ task }: HistoryCardProps) {
     return (
-        <View style={styles.container} key={task.id} >
-            <Text variant="titleMedium">{task.task}</Text>
-            <Text variant="bodyMedium">Finished: {task.updatedAt}</Text>
-            <Text variant="bodyMedium">Value: {task.value}</Text>
-            <Text variant="bodyMedium">Operation: {task.operation}</Text>
-            <Text variant="bodyMedium">Type: {task.type}</Text>
-            <Text variant="bodyMedium">Tags: {task.tags}</Text>
-        </View>
+        <Card>
+            <Card.Content>
+                <Text variant="headlineMedium">{task.task}</Text>
+                <View style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                }}>
+                    <Text variant="bodyMedium">Created: {task.createdAt}</Text>
+                    <Text variant="bodyMedium">Finished: {task.updatedAt}</Text>
+                </View>
+                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                    <Text variant="bodyMedium">Operation: {task.operation}</Text>
+                    <Text variant="bodyMedium">Value: {task.value}</Text>
+                </View>
+                <Text variant="bodyMedium">Type: {task.type}</Text>
+                <Text variant="bodyMedium">Tags: {task.tags}</Text>
+            </Card.Content>
+        </Card>
     );
 }
-
-const styles = {
-    container: {
-        padding: 8,
-        margin: 4,
-        borderRadius: 8,
-        backgroundColor: "#fff",
-    },
-};

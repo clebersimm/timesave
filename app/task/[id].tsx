@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { Surface, Text } from "react-native-paper";
@@ -11,12 +11,14 @@ import HistoryContainer from "@/components/Task/HistoryContainer";
 import ActionButton from "@/components/Task/ActionButton";
 import CompleteTaskButton from "@/components/Task/CompleteTaskButton";
 import { useTaskContext } from "@/src/context/TaskContext";
+import DeleteButton from "@/components/Task/DeleteButton";
 
 export default function Task() {
     const { id } = useLocalSearchParams();
     const [time, setTime] = useState<string>("00:00:00");
     const [activateTimer, setActivateTimer] = useState(false);
-    const { getTaskById, task, executeTask, completeTask } = useTaskContext();
+    const { getTaskById, task, executeTask, completeTask, deleteTask } = useTaskContext();
+    const router = useRouter();
 
     useEffect(() => {
         if (activateTimer) {
@@ -80,6 +82,11 @@ export default function Task() {
 
     };
 
+    const deleteHandler = async () => {
+        deleteTask(Number(id));
+        router.back();
+    }
+
     const _createHashKey = (taskId: number | undefined) => {
         return taskId?.toString() + Math.random().toString();
     }
@@ -108,6 +115,16 @@ export default function Task() {
             visible: task?.status !== StatusEnum.COMPLETED,
             key: _createHashKey(task?.id),
         },
+        {
+            component: (
+                <DeleteButton
+                    key={_createHashKey(task?.id) + "action"}
+                    deleteHandler={deleteHandler}
+                />
+            ),
+            visible: ((task?.status === StatusEnum.PENDING)),
+            key: _createHashKey(task?.id),
+        }
     ];
 
     const visibleButtons = buttons

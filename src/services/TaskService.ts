@@ -1,5 +1,6 @@
 import TaskRepository, { Task } from "../repository/TaskRepository";
 import { TaskRepositoryImpl } from "../repository/TaskRepositoryImpl";
+import { TaskRepositorySQLiteImpl } from "../repository/TaskRepositorySQLiteImpl";
 import OperationEnum, { OperationEnumUtils } from "../shared/OperationEnum";
 import StatusEnum, { StatusEnumUtils } from "../shared/StatusEnum";
 import TaskTypeEnum, { TaskTypeEnumUtils } from "../shared/TaskTypeEnum";
@@ -76,14 +77,17 @@ export interface TaskServiceInterface {
     getTotalCredit(): Promise<number>;
     getTotalDebit(): Promise<number>;
     getCompletedTasks(): Promise<TaskOutput[]>;
+    deleteTask(id: number): Promise<void>;
 }
 
 export class TaskServiceImpl implements TaskServiceInterface {
 
     private _taskRepository: TaskRepository;
+    private _taskRepository2: TaskRepository;
 
     constructor() {
         this._taskRepository = new TaskRepositoryImpl();
+        this._taskRepository2 = new TaskRepositorySQLiteImpl();
     }
 
     async getTasks(): Promise<TaskOutput[]> {
@@ -227,6 +231,10 @@ export class TaskServiceImpl implements TaskServiceInterface {
             task.value,
             task.deleted_at,
         );
+    }
+
+    async deleteTask(taskId: number): Promise<void> {
+        await this._taskRepository.deleteTask(taskId);
     }
 
     async _updateTask(task: Task, status: StatusEnum): Promise<Task | null> {
