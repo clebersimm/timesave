@@ -1,15 +1,18 @@
-import OperationEnum from "../shared/OperationEnum";
-import { checkDatabase, initDatabase } from "./database";
+import OperationEnum, { OperationEnumUtils } from "../shared/OperationEnum";
+import { StatusEnumUtils } from "../shared/StatusEnum";
+import { getDBConnection, initDatabase } from "./database";
 import TaskRepository, { Task, TaskHistory } from "./TaskRepository";
 
 
 export class TaskRepositorySQLiteImpl implements TaskRepository {
 
-    
-
     constructor() {
         initDatabase();
-        checkDatabase();
+    }
+
+    async getDBConnection() {
+        const db = await getDBConnection();
+        return db;
     }
 
     getTasks(): Promise<Task[]> {
@@ -18,8 +21,29 @@ export class TaskRepositorySQLiteImpl implements TaskRepository {
     getTaskById(id: number): Promise<Task | null> {
         throw new Error("Method not implemented.");
     }
-    addTask(task: Task): Promise<number> {
-        throw new Error("Method not implemented.");
+    async addTask(task: Task): Promise<number> {
+        const db = await this.getDBConnection();
+        const query = `INSERT INTO task (task, 
+        status, 
+        created_at, 
+        updated_at, 
+        type, 
+        operation, 
+        tags, 
+        value) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+        const params = [
+            task.task,
+            task.status,
+            task.created_at.getTime(),
+            task.updated_at.getTime(),
+            task.type,
+            task.operation,
+            task.tags,
+            task.value? task.value : 0
+        ];
+        await db.runAsync(query, params);
+        return 1;
     }
     updateTask(task: Task): Promise<Task> {
         throw new Error("Method not implemented.");
