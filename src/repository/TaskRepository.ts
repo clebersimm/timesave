@@ -1,4 +1,5 @@
 import OperationEnum from "../shared/OperationEnum";
+import StatusEnum from "../shared/StatusEnum";
 import TaskTypeEnum from "../shared/TaskTypeEnum";
 
 export default interface TaskRepository {
@@ -11,7 +12,8 @@ export default interface TaskRepository {
     addTaskHistory(taskHistory: TaskHistory): Promise<void>;
     getTaskHistoryByTaskId(taskId: number): Promise<TaskHistory[] | null>;
     findLastTaskHistoryByTaskId(taskId: number): Promise<TaskHistory | null>;
-    getTotalCredit(): Promise<number>;
+    getTotalCredit(operation: OperationEnum): Promise<number>;
+    getCompletedTasks(): Promise<Task[]>;
 }
 
 export class Task {
@@ -19,7 +21,7 @@ export class Task {
     constructor(
         id: number = 0,
         readonly task: string,
-        readonly status: string,
+        readonly status: StatusEnum,
         readonly created_at: Date,
         readonly updated_at: Date,
         readonly type: TaskTypeEnum,

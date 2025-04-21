@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { useTaskContext } from "@/src/context/TaskContext";
 
 export default function CreditInfo() {
-  const { totalCredit } = useTaskContext();
+  const { totalCredit, totalDebit } = useTaskContext();
 
   return (
     <View style={style.container}>
@@ -13,7 +13,11 @@ export default function CreditInfo() {
       </View>
       <View style={style.box}>
         <Text style={{ fontWeight: "bold", fontSize: 18 }}>Débitos</Text>
-        <Text>30</Text>
+        <Text>{totalDebit}</Text>
+      </View>
+      <View style={style.box}>
+        <Text style={{ fontWeight: "bold", fontSize: 18 }}>Total</Text>
+        <Text>{totalCredit - totalDebit}</Text>
       </View>
     </View>
   );
@@ -22,7 +26,7 @@ export default function CreditInfo() {
 const style = StyleSheet.create({
   container: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-evenly",
     margin: 10,
   },
   box: {

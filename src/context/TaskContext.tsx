@@ -3,6 +3,7 @@ import { TaskHistoryOutput, TaskInput, TaskOutput, taskService } from "../servic
 
 interface TaskContextProps {
     tasks: TaskOutput[];
+    completedTasks: TaskOutput[];
     totalCredit: number;
     getTotalCredit: () => Promise<void>;
     fetchTasks: () => Promise<void>;
@@ -15,6 +16,10 @@ interface TaskContextProps {
     taskHistory: TaskHistoryOutput[];
     taskCredit: number;
     calculateTaskCredit: (taskId: number) => Promise<void>;
+    totalDebit: number;
+    getTotalDebit: () => Promise<void>;
+    fetchCompletedTasks: () => Promise<void>;
+
 }
 
 const TaskContext = React.createContext<TaskContextProps | undefined>(undefined);
@@ -25,6 +30,8 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [task, setTask] = useState<TaskOutput | null>(null);
     const [taskHistory, setTaskHistory] = useState<TaskHistoryOutput[]>([]);
     const [taskCredit, setTaskCredit] = useState<number>(0);
+    const [totalDebit, setTotalDebit] = useState<number>(0);
+    const [completedTasks, setCompletedTasks] = useState<TaskOutput[]>([]);
 
     const fetchTasks = async () => {
         try {
@@ -32,6 +39,15 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setTasks(fetchedTasks);
         } catch (error) {
             console.error("Failed to fetch tasks:", error);
+        }
+    };
+
+    const fetchCompletedTasks = async () => {
+        try {
+            const completedTasks = await taskService.getCompletedTasks();
+            setCompletedTasks(completedTasks);
+        } catch (error) {
+            console.error("Failed to fetch completed tasks:", error);
         }
     };
 
@@ -56,6 +72,18 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setTotalCredit(totalCredit);
         } catch (error) {
             setTotalCredit(0);
+        }
+    };
+
+    const getTotalDebit = async () => {
+        try {
+            const totalDebit = await taskService.getTotalDebit();
+            if (totalDebit === undefined) {
+                throw new Error("Failed to fetch total credit");
+            }
+            setTotalDebit(totalDebit);
+        } catch (error) {
+            setTotalDebit(0);
         }
     };
 
@@ -110,15 +138,19 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
             getTaskById(taskId),
             calculateTaskCredit(taskId),
             getTotalCredit(),
+            getTotalDebit(),
+            fetchTasks(),
+            fetchCompletedTasks(),
         ]);
     }
 
     useEffect(() => {
         fetchTasks();
         getTotalCredit();
+        getTotalDebit();
     }, []);
 
-    const value = { tasks, fetchTasks, addTask, getTotalCredit, totalCredit, getTaskById, task, executeTask, completeTask, getTaskHistoryByTaskId, taskHistory, taskCredit, calculateTaskCredit };
+    const value = { tasks, fetchTasks, addTask, getTotalCredit, totalCredit, getTaskById, task, executeTask, completeTask, getTaskHistoryByTaskId, taskHistory, taskCredit, calculateTaskCredit, totalDebit, getTotalDebit, completedTasks, fetchCompletedTasks };
 
     return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;
 }

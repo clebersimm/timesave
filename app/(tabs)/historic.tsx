@@ -1,26 +1,22 @@
-import { Text, View } from "react-native";
-import { Button, TextInput } from "react-native-paper";
+import { HistoryTable } from "@/components/historic/HistoryTable";
+import { useTaskContext } from "@/src/context/TaskContext";
+import { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Historic() {
+  const { fetchCompletedTasks } = useTaskContext();
+
+  useEffect(() => {
+    fetchCompletedTasks();
+  }, []);
+
   return (
     <SafeAreaView
       style={{
         flex: 1,
       }}
     >
-      <View style={{ flexDirection: "row", paddingStart: 10, paddingTop: 10 }}>
-        <View style={{ flex: 1 }}>
-          <Text>
-        Description
-          </Text>
-        </View>
-        <View style={{ flex: 1 }}>
-          <Text>
-        End date
-          </Text>
-        </View>
-      </View>
+      <HistoryTable />
     </SafeAreaView>
   );
 }

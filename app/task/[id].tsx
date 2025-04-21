@@ -83,13 +83,13 @@ export default function Task() {
     const _createHashKey = (taskId: number | undefined) => {
         return taskId?.toString() + Math.random().toString();
     }
-        
+
 
     const buttons = [
         {
             component: (
                 <ActionButton
-                    key={_createHashKey(task?.id)+"action"}
+                    key={_createHashKey(task?.id) + "action"}
                     task={task}
                     actionHandler={actionHanlder}
                     active={activateTimer}
@@ -101,7 +101,7 @@ export default function Task() {
         {
             component: (
                 <CompleteTaskButton
-                    key={_createHashKey(task?.id)+"complete"}
+                    key={_createHashKey(task?.id) + "complete"}
                     actionHandler={completeHandler}
                 />
             ),
@@ -126,7 +126,8 @@ export default function Task() {
             </Surface>
             <CreditContainer
                 taskId={task?.id}
-            />            
+                taskOperation={task?.operation}
+            />
             <HistoryContainer
                 taskId={task?.id}
             />

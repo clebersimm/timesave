@@ -1,4 +1,3 @@
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import TaskRepository, { Task } from "../repository/TaskRepository";
 import { TaskRepositoryImpl } from "../repository/TaskRepositoryImpl";
 import OperationEnum, { OperationEnumUtils } from "../shared/OperationEnum";
@@ -24,6 +23,16 @@ export class TaskOutput {
             day: "2-digit",
             month: "2-digit",
             year: "numeric",
+        });
+    }
+
+    get updatedAt(): string {
+        return new Date(this.updated_at).toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
         });
     }
 
@@ -65,6 +74,8 @@ export interface TaskServiceInterface {
     getTaskHistoryByTaskId(taskId: number): Promise<TaskHistoryOutput[] | null>;
     completeTask(id: number): Promise<TaskOutput | null>;
     getTotalCredit(): Promise<number>;
+    getTotalDebit(): Promise<number>;
+    getCompletedTasks(): Promise<TaskOutput[]>;
 }
 
 export class TaskServiceImpl implements TaskServiceInterface {
@@ -77,6 +88,23 @@ export class TaskServiceImpl implements TaskServiceInterface {
 
     async getTasks(): Promise<TaskOutput[]> {
         const tasks = await this._taskRepository.getTasks();
+        return tasks.map(task => new TaskOutput(
+            task.getId,
+            task.task,
+            StatusEnumUtils.getStatusEnum(task.status) ?? StatusEnum.PENDING,
+            task.created_at,
+            task.updated_at,
+            TaskTypeEnumUtils.getTaskTypeEnum(task.type) ?? TaskTypeEnum.TIME,
+            OperationEnumUtils.getOperationEnum(task.operation) ?? OperationEnum.CREDIT,
+            task.tags,
+            task.value,
+            task.deleted_at,
+        ));
+    }
+
+    async getCompletedTasks(): Promise<TaskOutput[]> {
+        const tasks = await this._taskRepository.getCompletedTasks();
+        console.log(tasks);
         return tasks.map(task => new TaskOutput(
             task.getId,
             task.task,
@@ -341,7 +369,11 @@ export class TaskServiceImpl implements TaskServiceInterface {
     }
 
     async getTotalCredit(): Promise<number> {
-        return await this._taskRepository.getTotalCredit();
+        return await this._taskRepository.getTotalCredit(OperationEnum.CREDIT);
+    }
+
+    async getTotalDebit(): Promise<number> {
+        return await this._taskRepository.getTotalCredit(OperationEnum.DEBIT);
     }
 
 }

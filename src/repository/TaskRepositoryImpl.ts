@@ -1,24 +1,38 @@
 import OperationEnum from "../shared/OperationEnum";
+import StatusEnum from "../shared/StatusEnum";
 import TaskTypeEnum from "../shared/TaskTypeEnum";
 import TaskRepository, { Task, TaskHistory } from "./TaskRepository";
 
 export class TaskRepositoryImpl implements TaskRepository {
 
 
-    private _tasks: Task[] = [
-        new Task(1, "Task 1", "Pending", new Date(), new Date(), TaskTypeEnum.TIME, OperationEnum.CREDIT, "work", undefined, undefined),
-    ];
     private _taskHistory: TaskHistory[] = [];
 
+    private _tasks: Task[] = [
+        new Task(1, "Task 1", StatusEnum.PENDING, new Date(), new Date(), TaskTypeEnum.TIME, OperationEnum.CREDIT, "work", undefined, undefined),
+        new Task(2, "Task 2", StatusEnum.COMPLETED, new Date(), new Date(), TaskTypeEnum.TIME, OperationEnum.CREDIT, "work", 20, undefined),
+    ];
+
     async getTasks(): Promise<Task[]> {
-        return this._tasks;
+        const filteredTask = this._tasks.filter(task =>
+            [StatusEnum.PENDING, StatusEnum.ONGOING, StatusEnum.STOPED].includes(task.status)
+        );
+        return filteredTask;
     }
+
+    async getCompletedTasks(): Promise<Task[]> {
+        const filteredTask = this._tasks.filter(task =>
+            [StatusEnum.COMPLETED].includes(task.status)
+        );
+        return filteredTask;
+    }
+
     async getTaskById(id: number): Promise<Task | null> {
-        this._tasks = this._tasks.filter(task => task.getId === id);
-        if (this._tasks.length === 0) {
+        const filteredTask = this._tasks.filter(task => task.getId === id);
+        if (filteredTask.length === 0) {
             return null;
         }
-        return this._tasks[0];
+        return filteredTask[0];
     }
     async addTask(task: Task): Promise<number> {
         task.setId = this._tasks.length + 1;
@@ -65,15 +79,15 @@ export class TaskRepositoryImpl implements TaskRepository {
         return this._taskHistory[this._taskHistory.length - 1];
     }
 
-    async getTotalCredit(): Promise<number> {
-        this._tasks = this._tasks.filter(task => task.operation === OperationEnum.CREDIT);
-        if (this._tasks.length === 0) {
+    async getTotalCredit(operation: OperationEnum): Promise<number> {
+        const filteredTask = this._tasks.filter(task => (task.operation === operation && task.status === StatusEnum.COMPLETED));
+        if (filteredTask.length === 0) {
             return 0;
         }
         let total = 0;
-        this._tasks.forEach(task => {
+        filteredTask.forEach(task => {
             if (task.value) {
-                total += task.value;
+                total += Number(task.value);
             }
         }
         );
