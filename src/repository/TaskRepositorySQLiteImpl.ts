@@ -1,5 +1,5 @@
-import OperationEnum, { OperationEnumUtils } from "../shared/OperationEnum";
-import { StatusEnumUtils } from "../shared/StatusEnum";
+import OperationEnum from "../shared/OperationEnum";
+import StatusEnum from "../shared/StatusEnum";
 import { getDBConnection, initDatabase } from "./database";
 import TaskRepository, { Task, TaskHistory } from "./TaskRepository";
 
@@ -15,8 +15,18 @@ export class TaskRepositorySQLiteImpl implements TaskRepository {
         return db;
     }
 
-    getTasks(): Promise<Task[]> {
-        throw new Error("Method not implemented.");
+    async getTasks(): Promise<Task[]> {
+        try {
+            const db = await this.getDBConnection();
+            const query = `SELECT * FROM task WHERE status <> ? AND deleted_at IS NULL`;
+            const params = [StatusEnum.COMPLETED];
+            const tasks = await db.getAllAsync<Task>(query, params);
+            return tasks;
+        } catch (error) {
+            console.error("Error getting tasks:", error);
+
+        }
+        return [];
     }
     getTaskById(id: number): Promise<Task | null> {
         throw new Error("Method not implemented.");
@@ -40,16 +50,15 @@ export class TaskRepositorySQLiteImpl implements TaskRepository {
             task.type,
             task.operation,
             task.tags,
-            task.value? task.value : 0
+            task.value ? task.value : 0
         ];
-        await db.runAsync(query, params);
-        return 1;
+        const result = await db.runAsync(query, params);
+        return result.lastInsertRowId;
     }
     updateTask(task: Task): Promise<Task> {
         throw new Error("Method not implemented.");
     }
-    deleteTask(id: number): Promise<void>;
-    deleteTask(taskId: number): Promise<void>;
+
     deleteTask(taskId: unknown): Promise<void> {
         throw new Error("Method not implemented.");
     }

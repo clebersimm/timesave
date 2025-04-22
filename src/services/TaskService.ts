@@ -91,7 +91,7 @@ export class TaskServiceImpl implements TaskServiceInterface {
     }
 
     async getTasks(): Promise<TaskOutput[]> {
-        const tasks = await this._taskRepository.getTasks();
+        const tasks = await this._taskRepository2.getTasks();
         return tasks.map(task => new TaskOutput(
             task.getId,
             task.task,
@@ -135,7 +135,8 @@ export class TaskServiceImpl implements TaskServiceInterface {
             input.tags,
             input.value,
         );
-        const taskId = await this._taskRepository.addTask(task);
+        //const taskId = await this._taskRepository.addTask(task);
+        const taskId = await this._taskRepository2.addTask(task);
 
         const newTaskOutput = new TaskOutput(
             taskId,
