@@ -25,14 +25,12 @@ export class TaskRepositorySQLiteImpl implements TaskRepository {
         } catch (error) {
             console.error("Error getting tasks:", error);
         } finally {
-            //await db.closeAsync();
+            await db.closeAsync();
         }
         return [];
     }
     async getTaskById(taskId: number): Promise<Task | null> {
         const db = await this.getDBConnection();
-        console.log("taskId", taskId);
-        console.log("db", db);
         try {
             const query = `SELECT * FROM task WHERE id = ?`;
             const params = [taskId];
@@ -41,7 +39,7 @@ export class TaskRepositorySQLiteImpl implements TaskRepository {
         } catch (error) {
             console.error("Error getting tasks:", error);
         } finally {
-            // await db.closeAsync();
+            await db.closeAsync();
         }
         return null;
     }
@@ -67,8 +65,13 @@ export class TaskRepositorySQLiteImpl implements TaskRepository {
                 task.tags,
                 task.value ? task.value : 0
             ];
-            const result = await db.runAsync(query, params);
-            return result.lastInsertRowId;
+            let lastInsertRowId: number = -1;
+            await db.withTransactionAsync(async () => {
+                const result = await db.runAsync(query, params);
+                lastInsertRowId = result.lastInsertRowId;
+            });
+
+            return lastInsertRowId;
         } catch (error) {
             console.error("Error adding task:", error);
         } finally {
@@ -98,7 +101,9 @@ export class TaskRepositorySQLiteImpl implements TaskRepository {
                 task.value ? task.value : 0,
                 task.id
             ];
-            await db.runAsync(query, params);
+            await db.withTransactionAsync(async () => {
+                await db.runAsync(query, params);
+            });
             return task;
         } catch (error) {
             console.error("Error updating task:", error);
@@ -131,7 +136,9 @@ export class TaskRepositorySQLiteImpl implements TaskRepository {
                 taskHistory.status,
                 taskHistory.updated_at.getTime()
             ];
-            await db.runAsync(query, params);
+            await db.withTransactionAsync(async () => {
+                await db.runAsync(query, params);
+            });
         } catch (error) {
             console.error("Error adding task:", error);
         } finally {
@@ -148,22 +155,21 @@ export class TaskRepositorySQLiteImpl implements TaskRepository {
         } catch (error) {
             console.error("Error getting tasks history:", error);
         } finally {
-            //await db.closeAsync();
+            await db.closeAsync();
         }
         return [];
     }
     async findLastTaskHistoryByTaskId(taskId: number): Promise<TaskHistory | null> {
         const db = await this.getDBConnection();
         try {
-            const query = `SELECT * FROM task_history WHERE id = ? order by id desc`;
+            const query = `SELECT * FROM task_history WHERE task_id = ? order by id desc`;
             const params = [taskId];
             const taskHistory = await db.getAllAsync<TaskHistory>(query, params);
-            console.log("taskHistory", taskHistory);
             return taskHistory[0];
         } catch (error) {
             console.error("Error getting tasks:", error);
         } finally {
-            // await db.closeAsync();
+            await db.closeAsync();
         }
         return null;
     }
@@ -177,21 +183,21 @@ export class TaskRepositorySQLiteImpl implements TaskRepository {
         } catch (error) {
             console.error("Error getting total credit:", error);
         } finally {
-            //await db.closeAsync();
+            await db.closeAsync();
         }
         return 0;
     }
     async getCompletedTasks(): Promise<Task[]> {
         const db = await this.getDBConnection();
         try {
-            const query = `SELECT * FROM task WHERE where status = ? order by updated_at desc`;
+            const query = `SELECT * FROM task WHERE status = ? order by updated_at desc`;
             const params = [StatusEnum.COMPLETED];
             const tasks = await db.getAllAsync<Task>(query, params);
             return tasks;
         } catch (error) {
             console.error("Error getting tasks history:", error);
         } finally {
-            //await db.closeAsync();
+            await db.closeAsync();
         }
         return [];
     }

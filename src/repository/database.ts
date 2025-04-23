@@ -1,7 +1,7 @@
 import * as SQLite from 'expo-sqlite';
 
 export const getDBConnection = async () => {
-  const db = await SQLite.openDatabaseAsync('timesave.db');
+  const db = await SQLite.openDatabaseAsync('timesave.db', { useNewConnection: true });
   return db;
 };
 
@@ -9,7 +9,7 @@ export const initDatabase = async () => {
   const currentDbVersion = '1';
   try {
     const dbVersion = await checkDatabase();
-    if(currentDbVersion === dbVersion) {
+    if (currentDbVersion === dbVersion) {
       console.log('Database is already initialized');
       return;
     }
@@ -33,7 +33,7 @@ export const checkDatabase = async () => {
     const version = await db.getFirstAsync<{ value: string }>('SELECT value FROM settings WHERE key = "db_version"');
     return version?.value || null;
   } catch (error) {
-    console.error('Error checking database:', error);
+    //console.error('Error checking database:', error);
   }
   return null;
 }

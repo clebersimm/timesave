@@ -1,4 +1,4 @@
-import TaskRepository, { Task } from "../repository/TaskRepository";
+import TaskRepository, { Task, TaskHistory } from "../repository/TaskRepository";
 import { TaskRepositorySQLiteImpl } from "../repository/TaskRepositorySQLiteImpl";
 import OperationEnum, { OperationEnumUtils } from "../shared/OperationEnum";
 import StatusEnum, { StatusEnumUtils } from "../shared/StatusEnum";
@@ -188,9 +188,7 @@ export class TaskServiceImpl implements TaskServiceInterface {
     }
 
     async executeTask(id: number): Promise<TaskOutput | null> {
-        console.log("id", id);
         const findTask = await this._taskRepository.getTaskById(id);
-        console.log("findTask", findTask);
         if (!findTask) {
             return null;
         }
@@ -257,12 +255,12 @@ export class TaskServiceImpl implements TaskServiceInterface {
             return null;
         }
 
-        const taskHistory = {
-            id: output.id,
-            task_id: output.id,
-            status: output.status,
-            updated_at: output.updated_at,
-        };
+        const taskHistory = new TaskHistory(
+            0,
+            taskUpdated.id,
+            taskUpdated.status,
+            taskUpdated.updated_at,
+        );
 
         await this._taskRepository.addTaskHistory(taskHistory);
         return output;
@@ -270,6 +268,7 @@ export class TaskServiceImpl implements TaskServiceInterface {
 
     async calculateTaskCredit(id: number): Promise<number | null> {
         const task = await this._taskRepository.getTaskById(id);
+
         if (task?.type === TaskTypeEnum.ACTION) {
             return task.value ?? 0;
         }
@@ -277,19 +276,24 @@ export class TaskServiceImpl implements TaskServiceInterface {
         if (history === null) {
             return null;
         }
-
         let updateAt: Date = history[0].updated_at;
         let totalCredit = 0;
-        history?.forEach((item) => {
-            if (item.status === StatusEnum.ONGOING) {
-                updateAt = item.updated_at;
-            }
-            if (item.status === StatusEnum.STOPED) {
-                const timeDiff = Math.abs(item.updated_at.getTime() - updateAt.getTime());
-                const diffInMinutes = Math.floor(timeDiff / (1000 * 60));
-                totalCredit += diffInMinutes;
-            }
-        });
+        try {
+            const reverseHistory = history.reverse();
+            reverseHistory?.forEach((item) => {
+                if (item.status === StatusEnum.ONGOING) {
+                    updateAt = item.updated_at;
+                }
+                if (item.status === StatusEnum.STOPED) {
+                    const timeDiff = Math.abs(new Date(item.updated_at).getTime() - new Date(updateAt).getTime());
+                    const diffInMinutes = Math.floor(timeDiff / (1000 * 60));
+                    totalCredit += diffInMinutes;
+                }
+            });
+        } catch (error) {
+            console.log("error", error);
+        }
+
         return totalCredit;
     }
     async completeTask(id: number): Promise<TaskOutput | null> {
@@ -314,28 +318,19 @@ export class TaskServiceImpl implements TaskServiceInterface {
 
         const lastHistory = await this._taskRepository.findLastTaskHistoryByTaskId(id);
         const completedDate = new Date();
-        console.log("lastHistory", lastHistory);
         if (lastHistory && lastHistory.status !== StatusEnum.STOPED) {
-            const taskUpdated = {
-                ...task,
-                status: StatusEnum.STOPED,
-                updated_at: completedDate,
-                id: task.id
-            };
-            const taskHistory = {
-                id: taskUpdated.id,
-                task_id: taskUpdated.id,
-                status: taskUpdated.status,
-                updated_at: taskUpdated.updated_at,
-            };
-            
+            const taskHistory = new TaskHistory(
+                0,
+                task.id,
+                StatusEnum.STOPED,
+                completedDate,
+            );
             await this._taskRepository.addTaskHistory(taskHistory);
         }
         let value = task.value;
         if (task.type === TaskTypeEnum.TIME) {
             value = await this.calculateTaskCredit(id) ?? 0;
         }
-        
         const taskUpdated = new Task(
             task.id,
             task.task,
@@ -348,19 +343,17 @@ export class TaskServiceImpl implements TaskServiceInterface {
             value,
             task.deleted_at,
         );
-
         const output = await this._taskRepository.updateTask(taskUpdated);
-        console.log("output", output);
         if (!output) {
             return null;
         }
 
-        const taskHistory = {
-            id: output.id,
-            task_id: output.id,
-            status: output.status,
-            updated_at: output.updated_at,
-        };
+        const taskHistory = new TaskHistory(
+            0,
+            taskUpdated.id,
+            taskUpdated.status,
+            taskUpdated.updated_at,
+        );
 
         await this._taskRepository.addTaskHistory(taskHistory);
         return new TaskOutput(
