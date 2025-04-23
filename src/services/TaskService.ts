@@ -188,7 +188,9 @@ export class TaskServiceImpl implements TaskServiceInterface {
     }
 
     async executeTask(id: number): Promise<TaskOutput | null> {
+        console.log("id", id);
         const findTask = await this._taskRepository.getTaskById(id);
+        console.log("findTask", findTask);
         if (!findTask) {
             return null;
         }
@@ -292,7 +294,6 @@ export class TaskServiceImpl implements TaskServiceInterface {
     }
     async completeTask(id: number): Promise<TaskOutput | null> {
         const task = await this._taskRepository.getTaskById(id);
-        console.log("task", task);
         if (!task) {
             return null;
         }
