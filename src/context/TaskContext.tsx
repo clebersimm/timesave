@@ -36,6 +36,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const fetchTasks = async () => {
         try {
             const fetchedTasks = await taskService.getTasks();
+            //console.log("Fetched tasks:", fetchedTasks);
             setTasks(fetchedTasks);
         } catch (error) {
             console.error("Failed to fetch tasks:", error);

@@ -8,7 +8,6 @@ export default interface TaskRepository {
     addTask(task: Task): Promise<number>;
     updateTask(task: Task): Promise<Task>;
     deleteTask(id: number): Promise<void>;
-    existsTask(id: number): Promise<boolean>;
     addTaskHistory(taskHistory: TaskHistory): Promise<void>;
     getTaskHistoryByTaskId(taskId: number): Promise<TaskHistory[] | null>;
     findLastTaskHistoryByTaskId(taskId: number): Promise<TaskHistory | null>;
@@ -34,7 +33,7 @@ export class Task {
         this._id = id;
     }
 
-    get getId(): number {
+    get id(): number {
         return this._id;
     }
     set setId(value: number) {

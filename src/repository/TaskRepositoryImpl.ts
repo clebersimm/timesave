@@ -48,13 +48,7 @@ export class TaskRepositoryImpl implements TaskRepository {
         this._tasks = this._tasks.filter(task => task.getId !== taskId);
         console.log("deleted task ",this._tasks);
     }
-    async existsTask(id: number): Promise<boolean> {
-        this._tasks = this._tasks.filter(task => task.getId === id);
-        if (this._tasks.length === 0) {
-            return false;
-        }
-        return true;
-    }
+    
     async addTaskHistory(taskHistory: TaskHistory): Promise<void> {
         this._taskHistory.push(taskHistory);
     }

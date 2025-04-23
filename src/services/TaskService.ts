@@ -1,5 +1,4 @@
 import TaskRepository, { Task } from "../repository/TaskRepository";
-import { TaskRepositoryImpl } from "../repository/TaskRepositoryImpl";
 import { TaskRepositorySQLiteImpl } from "../repository/TaskRepositorySQLiteImpl";
 import OperationEnum, { OperationEnumUtils } from "../shared/OperationEnum";
 import StatusEnum, { StatusEnumUtils } from "../shared/StatusEnum";
@@ -17,7 +16,8 @@ export class TaskOutput {
         readonly tags: string,
         readonly value?: number,
         readonly deleted_at?: Date,
-    ) { }
+    ) {
+    }
 
     get createdAt(): string {
         return new Date(this.created_at).toLocaleDateString("pt-BR", {
@@ -83,17 +83,15 @@ export interface TaskServiceInterface {
 export class TaskServiceImpl implements TaskServiceInterface {
 
     private _taskRepository: TaskRepository;
-    private _taskRepository2: TaskRepository;
 
     constructor() {
-        this._taskRepository = new TaskRepositoryImpl();
-        this._taskRepository2 = new TaskRepositorySQLiteImpl();
+        this._taskRepository = new TaskRepositorySQLiteImpl();
     }
 
     async getTasks(): Promise<TaskOutput[]> {
-        const tasks = await this._taskRepository2.getTasks();
-        return tasks.map(task => new TaskOutput(
-            task.getId,
+        const tasks = await this._taskRepository.getTasks();
+        const result = tasks.map(task => new TaskOutput(
+            task.id,
             task.task,
             StatusEnumUtils.getStatusEnum(task.status) ?? StatusEnum.PENDING,
             task.created_at,
@@ -104,13 +102,13 @@ export class TaskServiceImpl implements TaskServiceInterface {
             task.value,
             task.deleted_at,
         ));
+        return result;
     }
 
     async getCompletedTasks(): Promise<TaskOutput[]> {
         const tasks = await this._taskRepository.getCompletedTasks();
-        console.log(tasks);
         return tasks.map(task => new TaskOutput(
-            task.getId,
+            task.id,
             task.task,
             StatusEnumUtils.getStatusEnum(task.status) ?? StatusEnum.PENDING,
             task.created_at,
@@ -135,8 +133,8 @@ export class TaskServiceImpl implements TaskServiceInterface {
             input.tags,
             input.value,
         );
-        //const taskId = await this._taskRepository.addTask(task);
-        const taskId = await this._taskRepository2.addTask(task);
+
+        const taskId = await this._taskRepository.addTask(task);
 
         const newTaskOutput = new TaskOutput(
             taskId,
@@ -160,7 +158,7 @@ export class TaskServiceImpl implements TaskServiceInterface {
             return null;
         }
         return new TaskOutput(
-            task.getId,
+            task.id,
             task.task,
             StatusEnumUtils.getStatusEnum(task.status) ?? StatusEnum.PENDING,
             task.created_at,
@@ -181,8 +179,7 @@ export class TaskServiceImpl implements TaskServiceInterface {
         if (!taskHistory) {
             return null;
         }
-        const reverseHistory = taskHistory.reverse();
-        return reverseHistory.map(history => new TaskHistoryOutput(
+        return taskHistory.map(history => new TaskHistoryOutput(
             history.id,
             history.task_id,
             history.status,
@@ -221,7 +218,7 @@ export class TaskServiceImpl implements TaskServiceInterface {
             return null;
         }
         return new TaskOutput(
-            task.getId,
+            task.id,
             task.task,
             StatusEnumUtils.getStatusEnum(task.status) ?? StatusEnum.PENDING,
             task.created_at,
@@ -241,7 +238,7 @@ export class TaskServiceImpl implements TaskServiceInterface {
     async _updateTask(task: Task, status: StatusEnum): Promise<Task | null> {
 
         const taskUpdated = new Task(
-            task.getId,
+            task.id,
             task.task,
             status,
             task.created_at,
@@ -259,8 +256,8 @@ export class TaskServiceImpl implements TaskServiceInterface {
         }
 
         const taskHistory = {
-            id: output.getId,
-            task_id: output.getId,
+            id: output.id,
+            task_id: output.id,
             status: output.status,
             updated_at: output.updated_at,
         };
@@ -278,10 +275,10 @@ export class TaskServiceImpl implements TaskServiceInterface {
         if (history === null) {
             return null;
         }
-        const reverseHistory = history.reverse();
+
         let updateAt: Date = history[0].updated_at;
         let totalCredit = 0;
-        reverseHistory?.forEach((item) => {
+        history?.forEach((item) => {
             if (item.status === StatusEnum.ONGOING) {
                 updateAt = item.updated_at;
             }
@@ -295,13 +292,13 @@ export class TaskServiceImpl implements TaskServiceInterface {
     }
     async completeTask(id: number): Promise<TaskOutput | null> {
         const task = await this._taskRepository.getTaskById(id);
-
+        console.log("task", task);
         if (!task) {
             return null;
         }
         if (task.status === StatusEnum.COMPLETED) {
             return new TaskOutput(
-                task.getId,
+                task.id,
                 task.task,
                 StatusEnumUtils.getStatusEnum(task.status) ?? StatusEnum.PENDING,
                 task.created_at,
@@ -311,17 +308,18 @@ export class TaskServiceImpl implements TaskServiceInterface {
                 task.tags,
                 task.value,
                 task.deleted_at,
-            );;
+            );
         }
 
         const lastHistory = await this._taskRepository.findLastTaskHistoryByTaskId(id);
         const completedDate = new Date();
+        console.log("lastHistory", lastHistory);
         if (lastHistory && lastHistory.status !== StatusEnum.STOPED) {
             const taskUpdated = {
                 ...task,
                 status: StatusEnum.STOPED,
                 updated_at: completedDate,
-                id: task.getId
+                id: task.id
             };
             const taskHistory = {
                 id: taskUpdated.id,
@@ -329,16 +327,16 @@ export class TaskServiceImpl implements TaskServiceInterface {
                 status: taskUpdated.status,
                 updated_at: taskUpdated.updated_at,
             };
-
+            
             await this._taskRepository.addTaskHistory(taskHistory);
         }
         let value = task.value;
         if (task.type === TaskTypeEnum.TIME) {
             value = await this.calculateTaskCredit(id) ?? 0;
         }
-
+        
         const taskUpdated = new Task(
-            task.getId,
+            task.id,
             task.task,
             StatusEnum.COMPLETED,
             task.created_at,
@@ -351,20 +349,21 @@ export class TaskServiceImpl implements TaskServiceInterface {
         );
 
         const output = await this._taskRepository.updateTask(taskUpdated);
+        console.log("output", output);
         if (!output) {
             return null;
         }
 
         const taskHistory = {
-            id: output.getId,
-            task_id: output.getId,
+            id: output.id,
+            task_id: output.id,
             status: output.status,
             updated_at: output.updated_at,
         };
 
         await this._taskRepository.addTaskHistory(taskHistory);
         return new TaskOutput(
-            output.getId,
+            output.id,
             output.task,
             StatusEnumUtils.getStatusEnum(output.status) ?? StatusEnum.PENDING,
             output.created_at,
