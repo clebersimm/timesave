@@ -1,50 +1,40 @@
-# Welcome to your Expo app 👋
+# Daily Deeds & Credits
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**Track your daily activities, earn rewards for productive tasks, and manage leisure time with Daily Deeds & Credits!**
 
-## Get started
+This React Native application helps you gain control over your daily routine by incentivizing positive habits and providing a clear overview of your activities.
 
-1. Install dependencies
+**How it works:**
 
-   ```bash
-   npm install
-   ```
+* **Earn Credits:** Log activities like reading a book, completing household chores (washing dishes, laundry, etc.), exercising, or pursuing hobbies to accumulate credits.
+* **Debit Credits:** Activities like playing video games or watching TV result in a deduction of credits, encouraging mindful engagement with leisure activities.
+* **Customizable Activities:** Easily add and configure your own activities with associated credit gains or debits, tailoring the app to your specific goals and routines.
+* **Progress Tracking:** Visualize your credit balance and activity history to understand your daily patterns and stay motivated.
 
-2. Start the app
+**Why use Daily Deeds & Credits?**
 
-   ```bash
-    npx expo start
-   ```
+* **Promote Positive Habits:** Turn productive tasks into rewarding experiences.
+* **Manage Leisure Time:** Encourage a balanced approach to relaxation and entertainment.
+* **Increase Self-Awareness:** Gain insights into how you spend your time.
+* **Stay Motivated:** Track your progress and celebrate your achievements.
 
-In the output, you'll find options to open the app in a
+**Built with:**
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+* React Native
+* [Add any other relevant libraries or technologies here]
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+**Get Started:**
 
-## Get a fresh project
+[Include instructions on how to clone the repository, install dependencies, and run the application.]
 
-When you're ready, run:
+**Contributing:**
 
-```bash
-npm run reset-project
-```
+[Explain how others can contribute to your project.]
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+**License:**
 
-## Learn more
+[Specify the license under which your project is distributed.]
 
-To learn more about developing your project with Expo, look at the following resources:
+**Contact:**
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+[Provide your contact information or a link to your preferred communication channel.]
