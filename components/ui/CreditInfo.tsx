@@ -10,11 +10,11 @@ export default function CreditInfo() {
   return (
     <View style={style.container}>
       <View style={[style.box, style.boxColorCredit]}>
-        <Text style={{ fontWeight: "bold", fontSize: 18 }}>Crédito</Text>
+        <Text style={{ fontWeight: "bold", fontSize: 18 }}>Credit</Text>
         <Text>{totalCredit}</Text>
       </View>
       <View style={[style.box, style.boxColorDebit]}>
-        <Text style={{ fontWeight: "bold", fontSize: 18 }}>Débitos</Text>
+        <Text style={{ fontWeight: "bold", fontSize: 18 }}>Debits</Text>
         <Text>{totalDebit}</Text>
       </View>
       <View style={[style.box, totalColor]}>
@@ -33,7 +33,7 @@ const style = StyleSheet.create({
   },
   box: {
     alignItems: "center",
-    borderWidth: 1,
+    borderWidth: 3,
     borderColor: "#000",
     padding: 10,
     borderRadius: 5,
@@ -43,7 +43,7 @@ const style = StyleSheet.create({
     borderColor: "#ff0000", // Red for debit
   },
   boxColorCredit: {
-    borderColor: "#00ff00", // Green for credit
+    borderColor: "#008000", // Dark green for credit
   },
   boxColorZero: {
     borderColor: "#000000", // Black for zero
