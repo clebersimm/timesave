@@ -18,6 +18,8 @@ ios/
 *.p12
 *.key
 *.mobileprovision
+*.aab
+*.apk
 
 # Metro
 .metro-health-check*

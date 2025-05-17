@@ -4,20 +4,22 @@ import { useTaskContext } from "@/src/context/TaskContext";
 
 export default function CreditInfo() {
   const { totalCredit, totalDebit } = useTaskContext();
+  const total = totalCredit - totalDebit;
+  const totalLabelColor = total > 0 ? style.labelCredit : total < 0 ? style.labelDebit : style.labelZero; // Green for positive, red for negative, black for zero
 
   return (
     <View style={style.container}>
-      <View style={style.box}>
-        <Text style={{ fontWeight: "bold", fontSize: 18 }}>Crédito</Text>
+      <View style={[style.box, style.boxColorCredit]}>
+        <Text style={[style.labelStyle, style.labelCredit]}>Credit</Text>
         <Text>{totalCredit}</Text>
       </View>
-      <View style={style.box}>
-        <Text style={{ fontWeight: "bold", fontSize: 18 }}>Débitos</Text>
+      <View style={[style.box, style.boxColorDebit]}>
+        <Text style={[style.labelStyle, style.labelDebit]}>Debits</Text>
         <Text>{totalDebit}</Text>
       </View>
-      <View style={style.box}>
-        <Text style={{ fontWeight: "bold", fontSize: 18 }}>Total</Text>
-        <Text>{totalCredit - totalDebit}</Text>
+      <View style={[style.box]}>
+        <Text style={[style.labelStyle, totalLabelColor]}>Total</Text>
+        <Text>{total}</Text>
       </View>
     </View>
   );
@@ -30,11 +32,33 @@ const style = StyleSheet.create({
     margin: 10,
   },
   box: {
-    alignItems: "center",
-    borderWidth: 1,
+    alignItems: "center",    
     borderColor: "#000",
-    padding: 10,
-    borderRadius: 5,
+    padding: 8,
+    borderRadius: 8,
     backgroundColor: "#f9f9f9", // A variant of white
   },
+  labelStyle: {
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  labelCredit: {
+    color: "#008000", // Dark green for credit
+  },
+  labelDebit: {
+    color: "#ff0000", // Red for debit
+  },
+  labelZero: {
+    color: "#000000", // Black for zero
+  },
+  boxColorDebit: {
+    borderColor: "#ff0000", // Red for debit
+  },
+  boxColorCredit: {
+    borderColor: "#008000", // Dark green for credit
+  },
+  boxColorZero: {
+    borderColor: "#000000", // Black for zero
+  }
+
 });
