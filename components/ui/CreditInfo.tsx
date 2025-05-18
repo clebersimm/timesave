@@ -1,4 +1,4 @@
-import { Text } from "react-native-paper";
+import { DefaultTheme, Text } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
 import { useTaskContext } from "@/src/context/TaskContext";
 
@@ -36,7 +36,7 @@ const style = StyleSheet.create({
     borderColor: "#000",
     padding: 8,
     borderRadius: 8,
-    backgroundColor: "#f9f9f9", // A variant of white
+    backgroundColor: DefaultTheme.colors.background,
   },
   labelStyle: {
     fontWeight: "bold",
