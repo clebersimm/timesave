@@ -1,37 +1,49 @@
 import { FontAwesome } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { MD3Colors } from "react-native-paper";
+import { DefaultTheme, MD3Colors } from "react-native-paper";
 
 export default function TabLayout() {
     return (
         <>
-            <StatusBar style="inverted" />
             <Tabs
                 screenOptions={{
                     headerShown: false,
-                    tabBarActiveTintColor: MD3Colors.primary30,
-                    tabBarInactiveTintColor: MD3Colors.secondary30,
+                    tabBarActiveTintColor: DefaultTheme.colors.onPrimary,
+                    tabBarInactiveTintColor: DefaultTheme.colors.inversePrimary,
+                    tabBarStyle: {
+                        backgroundColor: DefaultTheme.colors.primary,
+                        borderTopWidth: 1,
+                    },
                 }}
             >
                 <Tabs.Screen
                     name="index"
                     options={{
                         title: 'Tasks',
+                        headerTintColor: DefaultTheme.colors.onPrimary,
                         headerShown: true,
                         tabBarIcon: ({ color }) => (
                             <FontAwesome name="home" color={color} size={24} />
                         ),
+                        headerStyle: {                           
+                            backgroundColor: DefaultTheme.colors.primary,
+                            borderBottomWidth: 1,
+                        },
                     }}
                 />
                 <Tabs.Screen
                     name="historic"
                     options={{
                         title: 'Historic',
+                        headerTintColor: DefaultTheme.colors.onPrimary,
                         headerShown: true,
                         tabBarIcon: ({ color }) => (
                             <FontAwesome name="history" color={color} size={24} />
                         ),
+                        headerStyle: {                           
+                            backgroundColor: DefaultTheme.colors.primary,
+                            borderBottomWidth: 1,
+                        },
                     }}
                 />
             </Tabs>

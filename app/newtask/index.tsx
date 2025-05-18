@@ -9,7 +9,7 @@ import OperationEnum from "@/src/shared/OperationEnum";
 import TaskTypeEnum from "@/src/shared/TaskTypeEnum";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
-import { TextInput, View } from "react-native";
+import { Alert, TextInput, View } from "react-native";
 
 
 export type TaksForm = {
@@ -50,6 +50,14 @@ export default function NewTask(this: any) {
         });
     }
     async function submitHandler() {
+        if (inputForm.task.trim().length === 0) {
+            Alert.alert("Invalid input", "Task name should not be empty.");
+            return;
+        }
+        if (inputForm.tags.trim().length === 0) {
+            Alert.alert("Invalid input", "Tag should not be empty.");
+            return;
+        }
         setShowLoading(true);
         const input = new TaskInput(
             inputForm.task,
@@ -110,7 +118,7 @@ export default function NewTask(this: any) {
                 }} />
                 <NewTaskTextInput
                     textInputConfig={{
-                        label: "Tags",
+                        label: "Tags *",
                         mode: "outlined",
                         placeholder: "Add a tag",
                         value: inputForm.tags,

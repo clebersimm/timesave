@@ -3,6 +3,7 @@ import { StyleSheet, View } from "react-native";
 import CreditInfo from "../../components/ui/CreditInfo";
 import TodoTable from "../../components/TodoTable/TodoTable";
 import FabNewActivity from "../../components/FabNewActivity";
+import { DefaultTheme } from "react-native-paper";
 
 export default function Index() {
 
@@ -25,8 +26,7 @@ const style = StyleSheet.create({
   },
   headerContainer: {
     height: 90,
-    backgroundColor: "#f8f8f8",
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    backgroundColor: DefaultTheme.colors.background,
+    borderBottomWidth: 0.3,
   },
 });
