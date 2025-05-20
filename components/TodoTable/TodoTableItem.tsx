@@ -1,7 +1,8 @@
 import { Link } from "expo-router";
-import { List } from "react-native-paper";
+import { Card, List, Text } from "react-native-paper";
 import ActionButton from "./ActionButton";
 import { TaskOutput } from "@/src/services/TaskService";
+import { StyleSheet, View } from "react-native";
 
 export interface TodoTableItemProps {
     item: TaskOutput,
@@ -14,6 +15,12 @@ export function TodoTableItem({ item, onPress }: TodoTableItemProps) {
             pathname: '/task/[id]',
             params: { id: item.id }
         }}>
+            <View style={style.taskContainer}>
+                <Text>{item.id}</Text>
+                <Text>{item.task}</Text>
+            </View>
+            {
+                /*
             <List.Item
                 key={item.id}
                 title={item.task}
@@ -30,7 +37,31 @@ export function TodoTableItem({ item, onPress }: TodoTableItemProps) {
                     onPress={onPress}
                 />}
             />
+            */
+            }
         </Link>
 
     );
 };
+
+const style = StyleSheet.create({
+    taskContainer: {
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        padding: 16,
+        width: '95%',
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        marginBottom: 8,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+});
