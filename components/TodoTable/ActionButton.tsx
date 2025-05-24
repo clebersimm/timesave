@@ -8,7 +8,7 @@ export interface ActionButtonProps {
 };
 
 export default function ActionButton({ status, onPress }: ActionButtonProps) {
-    var icon = "camera";
+    var icon = "play-circle-outline";
     var iconColor = MD3Colors.error0;
     switch (status) {
         case StatusEnum.PENDING:
@@ -24,7 +24,7 @@ export default function ActionButton({ status, onPress }: ActionButtonProps) {
             iconColor = 'red';
             break;
         default:
-            icon = "play";
+            icon = "play-circle-outline";
             iconColor = 'green';
     }
 
