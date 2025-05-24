@@ -1,7 +1,9 @@
 import { Link } from "expo-router";
-import { List } from "react-native-paper";
+import { Text } from "react-native-paper";
 import ActionButton from "./ActionButton";
 import { TaskOutput } from "@/src/services/TaskService";
+import { StyleSheet, View } from "react-native";
+import TaskTypeIcon from "./TaskTypeIcon";
 
 export interface TodoTableItemProps {
     item: TaskOutput,
@@ -14,23 +16,69 @@ export function TodoTableItem({ item, onPress }: TodoTableItemProps) {
             pathname: '/task/[id]',
             params: { id: item.id }
         }}>
-            <List.Item
-                key={item.id}
-                title={item.task}
-                description={item.tags}
-                style={{ padding: 16, borderBottomWidth: 1, borderBottomColor: '#ccc' }}
-                titleStyle={{ fontSize: 16, fontWeight: 'bold' }}
-                descriptionStyle={{ fontSize: 14, color: '#666' }}
-                titleNumberOfLines={5}
-                descriptionNumberOfLines={1}
-                titleEllipsizeMode="tail"
-                descriptionEllipsizeMode="tail"
-                right={() => <ActionButton
-                    status={item.status}
-                    onPress={onPress}
-                />}
-            />
+            <View style={style.taskContainer}>
+                <View style={style.taskHeader}>
+                    <Text style={style.taskTitle}>{item.id}</Text>
+                </View>
+                <View style={style.taskInnerContainer}>
+                    <View style={style.taskContent}>
+                        <Text>{item.task}</Text>
+                        <Text>{item.tags}</Text>
+                        <View style={{ flexDirection: 'row', gap: 8 }}>
+                            <TaskTypeIcon type={item.type} />
+                            <Text>{item.status}</Text>
+                        </View>
+                    </View>
+                    <View>
+                        <ActionButton
+                            status={item.status}
+                            onPress={onPress}
+                        />
+                    </View>
+                </View>
+            </View>
         </Link>
 
     );
 };
+
+const style = StyleSheet.create({
+    taskContainer: {
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        padding: 8,
+        width: '100%',
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        marginBottom: 8,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    taskHeader: {
+        borderBottomColor: '#ccc',
+        borderBottomWidth: 1,
+    },
+    taskTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    taskInnerContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    taskContent: {
+        flexDirection: 'column',
+        justifyContent: 'center',
+        flex: 1,
+        gap: 4,
+    },
+});

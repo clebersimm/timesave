@@ -1,4 +1,4 @@
-import { FlatList, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import { TodoTableItem } from "./TodoTableItem";
 import { useTaskContext } from "@/src/context/TaskContext";
 
@@ -10,10 +10,11 @@ export default function TodoTable() {
   };
 
   return (
-    <View style={{ flex: 1, padding: 16 }}>
+    <View style={style.container}>
       <FlatList
         data={tasks}
         keyExtractor={(item) => item.id.toString()}
+        ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
         renderItem={({ item }) => (
           <TodoTableItem
             item={item}
@@ -24,3 +25,12 @@ export default function TodoTable() {
     </View>
   );
 }
+
+const style = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: 8,
+    paddingLeft: 8,
+    paddingRight: 8,
+  }
+});
