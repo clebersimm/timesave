@@ -1,7 +1,6 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
-import { Surface, Text } from "react-native-paper";
 import { useEffect } from "react";
 import TaskTypeEnum from "@/src/shared/TaskTypeEnum";
 import StatusEnum from "@/src/shared/StatusEnum";
@@ -12,6 +11,7 @@ import ActionButton from "@/components/Task/ActionButton";
 import CompleteTaskButton from "@/components/Task/CompleteTaskButton";
 import { useTaskContext } from "@/src/context/TaskContext";
 import DeleteButton from "@/components/Task/DeleteButton";
+import TimerContainer from "@/components/Task/TimerContainer";
 
 export default function Task() {
     const { id } = useLocalSearchParams();
@@ -53,6 +53,13 @@ export default function Task() {
 
     useEffect(() => {
         if (task?.status === StatusEnum.ONGOING) {
+            if(task.updated_at !== null && task.updated_at !== undefined) {
+                const diff = Math.abs(new Date().getTime() - new Date(task.updated_at).getTime()) / 1000;
+                const hours = String(Math.floor(diff / 3600)).padStart(2, "0");
+                const minutes = String(Math.floor((diff % 3600) / 60)).padStart(2, "0");
+                const seconds = String(Math.floor(diff % 60)).padStart(2, "0");
+                setTime(`${hours}:${minutes}:${seconds}`);
+            }
             setActivateTimer(true);
         } else {
             setActivateTimer(false);
@@ -67,10 +74,7 @@ export default function Task() {
         if (type === TaskTypeEnum.TIME) {
             await executeTask(Number(id));
             setActivateTimer(!activateTimer);
-        } else {
-            //const data = await taskService.completeTask(Number(id));
-            //setData(data);
-        }
+        } 
     };
 
     const completeHandler = async () => {
@@ -135,12 +139,7 @@ export default function Task() {
         <View style={styles.container} key={task?.id}>
             <DetailsData data={task} key="detailsData" />
             {visibleButtons}
-            <Surface style={styles.timerContainer}>
-                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                    <Text>Time</Text>
-                    <Text>{time}</Text>
-                </View>
-            </Surface>
+            <TimerContainer time={time}/>
             <CreditContainer
                 taskId={task?.id}
                 taskOperation={task?.operation}
@@ -155,9 +154,8 @@ export default function Task() {
 const styles = {
     container: {
         flex: 1,
-        padding: 16,
+        padding: 8,
         backgroundColor: '#fff',
         gap: 8,
-    },
-    timerContainer: { padding: 8, margin: 2, elevation: 2, borderRadius: 8 },
+    }
 };
