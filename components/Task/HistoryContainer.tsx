@@ -18,21 +18,18 @@ export default function HistoryContainer({ taskId }: HistoryContainerProps) {
     }, [taskId]);
 
 
-    return (
-        <Surface style={styles.historyContainer}>
-            <View>
-                <Text variant="headlineSmall">History</Text>
-            </View>
-            <View style={{ flexDirection: "column", gap: 8 }}>
-                <FlatList
-                    data={taskHistory}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item }) => (
-                        <Text>{`${item.updatedAt} - ${item.status}`}</Text>
-                    )}
-                />
-            </View>
-        </Surface>
+    return (<>
+        <View>
+            <Text variant="headlineSmall">History</Text>
+        </View>
+        <FlatList
+            data={taskHistory}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+                <Text>{`${item.updatedAt} - ${item.status}`}</Text>
+            )}
+        />
+    </>
     );
 }
 

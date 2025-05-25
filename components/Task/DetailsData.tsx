@@ -1,6 +1,6 @@
 import { TaskOutput } from "@/src/services/TaskService";
 import TaskTypeEnum from "@/src/shared/TaskTypeEnum";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
 export type DetailsDataProps = {
@@ -16,22 +16,46 @@ export default function DetailsData({ data }: DetailsDataProps) {
         valueText = (<View>
             <Text>Value: {data.value}</Text></View>)
     }
-    return (<>
-        <View>
-            <Text>Task: {data?.task}</Text>
+    return (<View style={style.container}>
+        <View style={style.textContainer}>
+            <Text style={style.label}>Task:</Text>
+            <Text style={style.text}>{data?.task}</Text>
         </View>
-        <View>
-            <Text>Status: {data?.status}</Text>
+        <View style={style.textContainer}>
+            <Text style={style.label}>Status:</Text>
+            <Text style={style.text}>{data?.status}</Text>
         </View>
-        <View>
-            <Text>Created At: {data?.createdAt}</Text>
+        <View style={style.textContainer}>
+            <Text style={style.label}>Created At:</Text>
+            <Text style={style.text}>{data?.createdAt}</Text>
         </View>
-        <View>
-            <Text>Type: {data?.type}</Text>
+        <View style={style.textContainer}>
+            <Text style={style.label}>Type:</Text>
+            <Text style={style.text}>{data?.type}</Text>
         </View>
         {valueText}
-        <View>
-            <Text>Operation: {data?.operation}</Text>
+        <View style={style.textContainer}>
+            <Text style={style.label}>Operation:</Text>
+            <Text style={style.text}>{data?.operation}</Text>
         </View>
-    </>)
+    </View>)
 }
+
+const style = StyleSheet.create({
+    container: {
+        gap: 8,
+        flexDirection: "column",
+    },
+    textContainer: {
+        flexDirection: "row",
+    },
+    label: {
+        fontWeight: "bold",
+        marginRight: 8,
+        fontSize: 16,    
+    },
+    text: {
+        fontSize: 16,
+        width: "90%",
+    }
+});
