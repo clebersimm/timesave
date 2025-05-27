@@ -1,6 +1,7 @@
 import { FlatList, StyleSheet, View } from "react-native";
 import { TodoTableItem } from "./TodoTableItem";
 import { useTaskContext } from "@/src/context/TaskContext";
+import { Text } from "react-native-paper";
 
 export default function TodoTable() {
   const { tasks } = useTaskContext();
@@ -12,6 +13,11 @@ export default function TodoTable() {
   return (
     <View style={style.container}>
       <FlatList
+        ListEmptyComponent={() => (
+          <View style={{ padding: 16, alignItems: 'center' }}>
+            <Text>No tasks available</Text>
+          </View>
+        )}
         data={tasks}
         keyExtractor={(item) => item.id.toString()}
         ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
