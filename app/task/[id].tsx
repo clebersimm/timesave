@@ -53,7 +53,7 @@ export default function Task() {
 
     useEffect(() => {
         if (task?.status === StatusEnum.ONGOING) {
-            if(task.updated_at !== null && task.updated_at !== undefined) {
+            if (task.updated_at !== null && task.updated_at !== undefined) {
                 const diff = Math.abs(new Date().getTime() - new Date(task.updated_at).getTime()) / 1000;
                 const hours = String(Math.floor(diff / 3600)).padStart(2, "0");
                 const minutes = String(Math.floor((diff % 3600) / 60)).padStart(2, "0");
@@ -74,7 +74,7 @@ export default function Task() {
         if (type === TaskTypeEnum.TIME) {
             await executeTask(Number(id));
             setActivateTimer(!activateTimer);
-        } 
+        }
     };
 
     const completeHandler = async () => {
@@ -138,12 +138,14 @@ export default function Task() {
     return (
         <View style={styles.container} key={task?.id}>
             <DetailsData data={task} key="detailsData" />
-            {visibleButtons}
-            <TimerContainer time={time}/>
+            <TimerContainer time={time} />
             <CreditContainer
                 taskId={task?.id}
                 taskOperation={task?.operation}
             />
+            <View style={styles.buttonContainer}>
+                {visibleButtons}
+            </View>
             <HistoryContainer
                 taskId={task?.id}
             />
@@ -157,5 +159,11 @@ const styles = {
         padding: 8,
         backgroundColor: '#fff',
         gap: 8,
-    }
+    },
+    buttonContainer: {
+        flexDirection: "row" as const,
+        justifyContent: "space-evenly" as const,
+        marginTop: 16,
+        marginBottom: 16,
+    },
 };

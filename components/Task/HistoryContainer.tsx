@@ -23,6 +23,11 @@ export default function HistoryContainer({ taskId }: HistoryContainerProps) {
             <Text variant="headlineSmall">History</Text>
         </View>
         <FlatList
+            ListEmptyComponent={() => (
+                <View style={{ padding: 16, alignItems: 'center' }}>
+                    <Text>No history available</Text>
+                </View>
+            )}
             data={taskHistory}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
@@ -32,7 +37,3 @@ export default function HistoryContainer({ taskId }: HistoryContainerProps) {
     </>
     );
 }
-
-const styles = {
-    historyContainer: { padding: 8, margin: 2, elevation: 2, borderRadius: 8 },
-};
