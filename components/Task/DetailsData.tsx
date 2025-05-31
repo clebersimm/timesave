@@ -2,6 +2,7 @@ import { TaskOutput } from "@/src/services/TaskService";
 import TaskTypeEnum from "@/src/shared/TaskTypeEnum";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
+import TaskTypeIcon from "../TodoTable/TaskTypeIcon";
 
 export type DetailsDataProps = {
     data: TaskOutput | null;
@@ -32,6 +33,7 @@ export default function DetailsData({ data }: DetailsDataProps) {
         <View style={style.textContainer}>
             <Text style={style.label}>Type:</Text>
             <Text style={style.text}>{data?.type}</Text>
+            <TaskTypeIcon type={data.type} />
         </View>
         {valueText}
         <View style={style.textContainer}>

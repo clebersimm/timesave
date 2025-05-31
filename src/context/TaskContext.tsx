@@ -127,6 +127,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
             getTaskById(taskId),
             getTaskHistoryByTaskId(taskId),
             calculateTaskCredit(taskId),
+            fetchTasks(),
         ]);
     }
 
