@@ -24,22 +24,14 @@ export default function Task() {
         if (activateTimer) {
             const interval = setInterval(() => {
                 setTime((prevTime) => {
-                    const [hours, minutes, seconds] = prevTime.split(":").map(Number);
-                    let newSeconds = seconds + 1;
-                    let newMinutes = minutes;
-                    let newHours = hours;
-
-                    if (newSeconds === 60) {
-                        newSeconds = 0;
-                        newMinutes += 1;
-                    }
-
-                    if (newMinutes === 60) {
-                        newMinutes = 0;
-                        newHours += 1;
-                    }
-
-                    return `${String(newHours).padStart(2, "0")}:${String(newMinutes).padStart(2, "0")}:${String(newSeconds).padStart(2, "0")}`;
+                   if(task?.status) {
+                     const diff = Math.abs(new Date().getTime() - new Date(task.updated_at).getTime()) / 1000;
+                     const hours = String(Math.floor(diff / 3600)).padStart(2, "0");
+                     const minutes = String(Math.floor((diff % 3600) / 60)).padStart(2, "0");
+                     const seconds = String(Math.floor(diff % 60)).padStart(2, "0");
+                     return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+                   }
+                    return prevTime;
                 });
             }, 1000);
 
