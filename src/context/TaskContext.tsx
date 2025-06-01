@@ -123,7 +123,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (!output) {
             throw new Error("Failed to execute task");
         }
-        Promise.all([
+        await Promise.all([
             getTaskById(taskId),
             getTaskHistoryByTaskId(taskId),
             calculateTaskCredit(taskId),

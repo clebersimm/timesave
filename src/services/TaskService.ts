@@ -193,11 +193,6 @@ export class TaskServiceImpl implements TaskServiceInterface {
             return null;
         }
         let status = StatusEnum.PENDING;
-        if (findTask.status === StatusEnum.PENDING) {
-            status = StatusEnum.ONGOING;
-        } else {
-            status = StatusEnum.STOPED;
-        }
 
         switch (findTask.status) {
             case StatusEnum.PENDING:
