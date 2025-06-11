@@ -17,7 +17,10 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.timesave"
+      "package": "com.anonymous.timesave",
+      "permissions": [
+        "NOTIFICATIONS"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -47,6 +50,6 @@
       "eas": {
         "projectId": "6f7a5d21-79d1-4ff1-8c9b-a902044a51ac"
       }
-    }
+    }    
   }
 }
