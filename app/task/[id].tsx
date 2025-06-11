@@ -12,11 +12,13 @@ import CompleteTaskButton from "@/components/Task/CompleteTaskButton";
 import { useTaskContext } from "@/src/context/TaskContext";
 import DeleteButton from "@/components/Task/DeleteButton";
 import TimerContainer from "@/components/Task/TimerContainer";
+import * as Notifications from 'expo-notifications';
 
 export default function Task() {
     const { id } = useLocalSearchParams();
     const [time, setTime] = useState<string>("00:00:00");
     const [activateTimer, setActivateTimer] = useState(false);
+    const [notificationId, setNotificationId] = useState<string | null>(null);
     const { getTaskById, task, executeTask, completeTask, deleteTask } = useTaskContext();
     const router = useRouter();
 
@@ -24,13 +26,13 @@ export default function Task() {
         if (activateTimer) {
             const interval = setInterval(() => {
                 setTime((prevTime) => {
-                   if(task?.status) {
-                     const diff = Math.abs(new Date().getTime() - new Date(task.updated_at).getTime()) / 1000;
-                     const hours = String(Math.floor(diff / 3600)).padStart(2, "0");
-                     const minutes = String(Math.floor((diff % 3600) / 60)).padStart(2, "0");
-                     const seconds = String(Math.floor(diff % 60)).padStart(2, "0");
-                     return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-                   }
+                    if (task?.status) {
+                        const diff = Math.abs(new Date().getTime() - new Date(task.updated_at).getTime()) / 1000;
+                        const hours = String(Math.floor(diff / 3600)).padStart(2, "0");
+                        const minutes = String(Math.floor((diff % 3600) / 60)).padStart(2, "0");
+                        const seconds = String(Math.floor(diff % 60)).padStart(2, "0");
+                        return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+                    }
                     return prevTime;
                 });
             }, 1000);
@@ -57,6 +59,25 @@ export default function Task() {
             setActivateTimer(false);
         }
     }, [task]);
+
+    useEffect(() => {
+        if (activateTimer) {
+            console.log("Timer activated for task:", task?.id);
+            Notifications.scheduleNotificationAsync({
+                content: {
+                    title: "Task Ongoing",
+                    subtitle: `${task?.tags}`,
+                    body: `Task ${task?.id} - ${task?.task}`,
+                    sticky: true
+                },
+                trigger: null, // Trigger immediately
+            }).then((tmpId) => {
+                setNotificationId(tmpId);
+            });
+        } else {
+            Notifications.dismissNotificationAsync(notificationId? notificationId : "");
+        }
+    }, [activateTimer]);
 
     const _getTaskById = async () => {
         await getTaskById(Number(id));

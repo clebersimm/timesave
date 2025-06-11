@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import { Text } from "react-native-paper";
 import * as Font from 'expo-font';
+import * as Notifications from 'expo-notifications';
 
 //SplashScreen.preventAutoHideAsync();
 
@@ -14,6 +15,19 @@ SplashScreen.setOptions({
   fade: true,
 });
 */
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => {
+    console.log("Notification received");
+    return {
+      shouldShowAlert: true,
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+      shouldShowList: true,
+      shouldShowBanner: true,
+    }    
+  },
+});
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
