@@ -1,9 +1,12 @@
 import OperationEnum from "../shared/OperationEnum";
 import StatusEnum from "../shared/StatusEnum";
 import TaskTypeEnum from "../shared/TaskTypeEnum";
-import TaskRepository, { Task, TaskHistory } from "./TaskRepository";
+import TaskRepository, { Tag, Task, TaskHistory } from "./TaskRepository";
 
 export class TaskRepositoryImpl implements TaskRepository {
+    getTags(): Promise<Tag[]> {
+        throw new Error("Method not implemented.");
+    }
 
 
     private _taskHistory: TaskHistory[] = [];
@@ -28,7 +31,7 @@ export class TaskRepositoryImpl implements TaskRepository {
     }
 
     async getTaskById(id: number): Promise<Task | null> {
-        const filteredTask = this._tasks.filter(task => task.getId === id);
+        const filteredTask = this._tasks.filter(task => task.id === id);
         if (filteredTask.length === 0) {
             return null;
         }
@@ -37,15 +40,15 @@ export class TaskRepositoryImpl implements TaskRepository {
     async addTask(task: Task): Promise<number> {
         task.setId = this._tasks.length + 1;
         this._tasks.push(task);
-        return task.getId;
+        return task.id;
     }
     async updateTask(task: Task): Promise<Task> {
-        this._tasks = this._tasks.filter(t => t.getId !== task.getId);
+        this._tasks = this._tasks.filter(t => t.id !== task.id);
         this._tasks.push(task);
         return task;
     }
     async deleteTask(taskId: number): Promise<void> {
-        this._tasks = this._tasks.filter(task => task.getId !== taskId);
+        this._tasks = this._tasks.filter(task => task.id !== taskId);
         console.log("deleted task ",this._tasks);
     }
     
