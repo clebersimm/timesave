@@ -15,7 +15,8 @@ export class TagsRepositorySQLiteImpl implements TagsRepository {
     async getTags(): Promise<Tag[]> {
         const db = await this.getDBConnection();
         try {
-            const query = `SELECT id,tag FROM task WHERE tags IS NOT NULL AND tags <> '' order by tag asc`;
+            const query = `SELECT id, tag 
+            FROM tags order by tag asc`;
             const tags = await db.getAllAsync<{ id: number, tag: string }>(query);
             return tags.map(tag => new Tag(tag.id, tag.tag));
         } catch (error) {

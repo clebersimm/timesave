@@ -1,14 +1,10 @@
 import OperationEnum from "../shared/OperationEnum";
 import StatusEnum from "../shared/StatusEnum";
 import TaskTypeEnum from "../shared/TaskTypeEnum";
-import TaskRepository, { Tag, Task, TaskHistory } from "./TaskRepository";
+import TaskRepository, {  Task, TaskHistory } from "./TaskRepository";
 
 export class TaskRepositoryImpl implements TaskRepository {
-    getTags(): Promise<Tag[]> {
-        throw new Error("Method not implemented.");
-    }
-
-
+    
     private _taskHistory: TaskHistory[] = [];
 
     private _tasks: Task[] = [
