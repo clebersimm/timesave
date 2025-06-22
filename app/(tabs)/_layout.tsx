@@ -46,6 +46,21 @@ export default function TabLayout() {
                         },
                     }}
                 />
+                <Tabs.Screen
+                    name="config"
+                    options={{
+                        title: 'Config',
+                        headerTintColor: DefaultTheme.colors.onPrimary,
+                        headerShown: true,
+                        tabBarIcon: ({ color }) => (
+                            <FontAwesome name="cog" color={color} size={24} />
+                        ),
+                        headerStyle: {                           
+                            backgroundColor: DefaultTheme.colors.primary,
+                            borderBottomWidth: 1,
+                        },
+                    }}
+                />
             </Tabs>
         </>
     );

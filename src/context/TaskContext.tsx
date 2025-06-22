@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { TaskHistoryOutput, TaskInput, TaskOutput, taskService } from "../services/TaskService";
+import { TagsOutput, tagsService } from "../services/TagsService";
+import { Tag } from "../repository/TagsRepository";
 
 interface TaskContextProps {
     tasks: TaskOutput[];
@@ -20,6 +22,8 @@ interface TaskContextProps {
     getTotalDebit: () => Promise<void>;
     fetchCompletedTasks: () => Promise<void>;
     deleteTask: (taskId: number) => Promise<void>;
+    tags: TagsOutput[];
+    fetchTags: () => Promise<void>;
 }
 
 const TaskContext = React.createContext<TaskContextProps | undefined>(undefined);
@@ -32,6 +36,8 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [taskCredit, setTaskCredit] = useState<number>(0);
     const [totalDebit, setTotalDebit] = useState<number>(0);
     const [completedTasks, setCompletedTasks] = useState<TaskOutput[]>([]);
+    const [tags, setTags] = useState<TagsOutput[]>([]);
+
 
     const fetchTasks = async () => {
         try {
@@ -151,6 +157,15 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ]);
     }
 
+    const fetchTags = async () => {
+        try {
+            const fetchedTags = await tagsService.getTags();
+            setTags(fetchedTags);
+        } catch (error) {
+            console.error("Failed to fetch tags:", error);
+        }
+    };
+
     useEffect(() => {
         fetchTasks();
         getTotalCredit();
@@ -175,7 +190,9 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
         getTotalDebit,
         completedTasks,
         fetchCompletedTasks,
-        deleteTask
+        deleteTask,
+        tags,
+        fetchTags,
     };
 
     return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;
