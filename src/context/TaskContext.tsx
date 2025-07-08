@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { TaskHistoryOutput, TaskInput, TaskOutput, taskService } from "../services/TaskService";
 import { TagsOutput, tagsService } from "../services/TagsService";
 import { Tag } from "../repository/TagsRepository";
+import { Task } from "../repository/TaskRepository";
+
 
 interface TaskContextProps {
     tasks: TaskOutput[];
@@ -24,6 +26,8 @@ interface TaskContextProps {
     deleteTask: (taskId: number) => Promise<void>;
     tags: TagsOutput[];
     fetchTags: () => Promise<void>;
+    fetchSuggestionsTaks: (searchText: string) => Promise<Task[]>;
+
 }
 
 const TaskContext = React.createContext<TaskContextProps | undefined>(undefined);
@@ -166,6 +170,16 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    const fetchSuggestionsTaks = async (searchText: string): Promise<Task[]> => {
+        try {
+            const suggestions = await taskService.getSuggestionTask(searchText);
+            return suggestions;
+        } catch (error) {
+            console.error("Failed to fetch task suggestions:", error);
+            throw new Error("Failed fetch suggestions");
+        }
+    }
+
     useEffect(() => {
         fetchTasks();
         getTotalCredit();
@@ -193,6 +207,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
         deleteTask,
         tags,
         fetchTags,
+        fetchSuggestionsTaks
     };
 
     return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;
