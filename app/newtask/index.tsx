@@ -34,10 +34,13 @@ export default function NewTask(this: any) {
     const [showLoading, setShowLoading] = useState(false);
     const router = useRouter();
     const tagRef = useRef<TextInput>(null);
+    const [tagtext, setTagText] = useState<string>("");
     const [searchText, setSearchText] = useState<string>("");
     const [suggestions, setSuggestions] = useState<Task[]>([]);
+    const [suggestionSelected, setSuggestionSelected] = useState<Task | null>(null);
 
     function inputChagedHandler(inputIdentifier: string, enteredValue: any) {
+        console.log("inputChagedHandler");
         setInputForm((currentInputForm) => {
             return {
                 ...currentInputForm,
@@ -46,6 +49,7 @@ export default function NewTask(this: any) {
         });
     };
     function changeValueHandler(inputIdentifier: string, valueSelected: any) {
+        console.log("changeValueHandler");
         setInputForm((currentInputForm) => {
             return {
                 ...currentInputForm,
@@ -54,6 +58,7 @@ export default function NewTask(this: any) {
         });
     }
     async function submitHandler() {
+        console.log("submitHandler");
         if (inputForm.task.trim().length === 0) {
             Alert.alert("Invalid input", "Task name should not be empty.");
             return;
@@ -103,17 +108,31 @@ export default function NewTask(this: any) {
     }
 
     useEffect(() => {
-        if (searchText.length > 2) {
-            console.log("Search text changed:", searchText);
+        console.log("useEffect searchText");
+        if (searchText.length > 2 && suggestionSelected?.task !== searchText) {
             fetchSuggestionsTaks(searchText)
                 .then((suggestions) => {
-                    console.log("Suggestions fetched:", suggestions);
                     setSuggestions(suggestions);
                 })
                 .catch((error) => {
                 });
+        } else {
+            setSuggestions([]);
         }
     }, [searchText]);
+
+    function handleSuggestionSelect(suggestion: Task) {
+        console.log("handleSuggestionSelect");
+        setInputForm((currentInputForm) => {
+            return {
+                ...currentInputForm,
+                task: suggestion.task,
+            };
+        });
+        setSearchText(suggestion.task);
+        setSuggestionSelected(suggestion);
+        setSuggestions([]);
+    }
 
     return (
         <>
@@ -134,16 +153,21 @@ export default function NewTask(this: any) {
                     onChangeText: setSearchText,
                 }} />
                 {suggestions.length > 0 && (
-                    <FlatList
-                        data={suggestions}
-                        keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity>
-                                <Text>{item.task}</Text>
-                            </TouchableOpacity>
-                        )}
-                    />
-                )}
+                    <View>
+                        <Text style={{ marginLeft: 4, marginBottom: 4, fontSize: 16, color: '#888' }}>
+                            Suggestions
+                        </Text>
+                        <FlatList
+                            data={suggestions}
+                            keyExtractor={(item) => item.id.toString()}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity onPress={() => handleSuggestionSelect(item)}>
+                                    <Text>{item.task}</Text>
+                                </TouchableOpacity>
+                            )}
+                        />
+                    </View>)
+                }
                 <NewTaskTextInput
                     textInputConfig={{
                         label: "Tags *",
