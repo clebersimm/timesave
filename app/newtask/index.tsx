@@ -40,7 +40,6 @@ export default function NewTask(this: any) {
     const [suggestionSelected, setSuggestionSelected] = useState<Task | null>(null);
 
     function inputChagedHandler(inputIdentifier: string, enteredValue: any) {
-        console.log("inputChagedHandler");
         setInputForm((currentInputForm) => {
             return {
                 ...currentInputForm,
@@ -49,7 +48,6 @@ export default function NewTask(this: any) {
         });
     };
     function changeValueHandler(inputIdentifier: string, valueSelected: any) {
-        console.log("changeValueHandler");
         setInputForm((currentInputForm) => {
             return {
                 ...currentInputForm,
@@ -58,7 +56,6 @@ export default function NewTask(this: any) {
         });
     }
     async function submitHandler() {
-        console.log("submitHandler");
         if (inputForm.task.trim().length === 0) {
             Alert.alert("Invalid input", "Task name should not be empty.");
             return;
@@ -108,7 +105,6 @@ export default function NewTask(this: any) {
     }
 
     useEffect(() => {
-        console.log("useEffect searchText");
         if (searchText.length > 2 && suggestionSelected?.task !== searchText) {
             fetchSuggestionsTaks(searchText)
                 .then((suggestions) => {
@@ -122,7 +118,6 @@ export default function NewTask(this: any) {
     }, [searchText]);
 
     function handleSuggestionSelect(suggestion: Task) {
-        console.log("handleSuggestionSelect");
         setInputForm((currentInputForm) => {
             return {
                 ...currentInputForm,
@@ -175,6 +170,7 @@ export default function NewTask(this: any) {
                         placeholder: "Add a tag",
                         value: inputForm.tags,
                         ref: tagRef,
+                        onChangeText: inputChagedHandler.bind(this, "tags"),
                     }}
                 />
                 <TaskTypeInput
