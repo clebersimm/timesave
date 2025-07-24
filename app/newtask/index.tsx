@@ -56,7 +56,7 @@ export default function NewTask(this: any) {
         });
     }
     async function submitHandler() {
-        if (inputForm.task.trim().length === 0) {
+        if (searchText.trim().length === 0) {
             Alert.alert("Invalid input", "Task name should not be empty.");
             return;
         }
@@ -66,7 +66,7 @@ export default function NewTask(this: any) {
         }
         setShowLoading(true);
         const input = new TaskInput(
-            inputForm.task,
+            searchText,
             inputForm.type,
             inputForm.operation,
             inputForm.tags,
@@ -122,6 +122,7 @@ export default function NewTask(this: any) {
             return {
                 ...currentInputForm,
                 task: suggestion.task,
+                tags: suggestion.tags,
             };
         });
         setSearchText(suggestion.task);
