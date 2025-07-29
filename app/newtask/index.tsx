@@ -2,7 +2,6 @@ import Loading from "@/components/Loading/Loading";
 import NewTaskHeader from "@/components/NewTask/Header";
 import NewTaskTextInput from "@/components/NewTask/NewTaskTextInput";
 import OperationInput from "@/components/NewTask/OperationInput";
-import SuggestionTextInput from "@/components/NewTask/SugestionTextInput";
 import TaskTypeInput from "@/components/NewTask/TaskTypeInput";
 import { useTaskContext } from "@/src/context/TaskContext";
 import { Task } from "@/src/repository/TaskRepository";
@@ -158,7 +157,17 @@ export default function NewTask(this: any) {
                             keyExtractor={(item) => item.id.toString()}
                             renderItem={({ item }) => (
                                 <TouchableOpacity onPress={() => handleSuggestionSelect(item)}>
-                                    <Text>{item.task}</Text>
+                                    <View style={{
+                                        flex: 1,
+                                        paddingLeft: 8,
+                                        paddingBottom: 8,
+                                        flexDirection: 'row',
+                                        borderBottomWidth: 0.3,
+                                        borderBottomColor: '#ccc'
+                                    }}>
+                                        <Text style={{ flexShrink: 1, flexWrap: 'wrap' }}>{item.task}</Text>
+                                        <Text style={{ flexShrink: 1, flexWrap: 'wrap', color: '#888' }}> Tags: {item.tags}</Text>
+                                    </View>
                                 </TouchableOpacity>
                             )}
                         />

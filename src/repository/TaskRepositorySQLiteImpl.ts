@@ -204,7 +204,7 @@ export class TaskRepositorySQLiteImpl implements TaskRepository {
     async getSuggestionTask(searchTerm:string): Promise<Task[]> {
         const db = await this.getDBConnection();
         try {
-            const query = `SELECT * FROM task WHERE UPPER(task) LIKE ? `;
+            const query = `SELECT * FROM task WHERE UPPER(task) LIKE ? GROUP BY task, tags ORDER BY created_at DESC LIMIT 10`;
             const params = [`%${searchTerm.toUpperCase()}%`];
             const tasks = await db.getAllAsync<Task>(query, params);
             return tasks;
