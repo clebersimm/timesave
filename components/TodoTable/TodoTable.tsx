@@ -27,6 +27,7 @@ export default function TodoTable() {
             onPress={() => handleIconPress(item.id)}
           />
         )}
+        contentContainerStyle={{ paddingBottom: 80 }} 
       />
     </View>
   );
