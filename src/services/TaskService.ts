@@ -78,6 +78,7 @@ export interface TaskServiceInterface {
     getTotalDebit(): Promise<number>;
     getCompletedTasks(): Promise<TaskOutput[]>;
     deleteTask(id: number): Promise<void>;
+    getSuggestionTask(searchTerm:string): Promise<Task[]>
 }
 
 export class TaskServiceImpl implements TaskServiceInterface {
@@ -372,7 +373,9 @@ export class TaskServiceImpl implements TaskServiceInterface {
     async getTotalDebit(): Promise<number> {
         return await this._taskRepository.getTotalCredit(OperationEnum.DEBIT);
     }
-
+    async getSuggestionTask(searchTerm: string): Promise<Task[]> {
+        return await this._taskRepository.getSuggestionTask(searchTerm);
+    }
 }
 
 export const taskService = new TaskServiceImpl();

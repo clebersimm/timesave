@@ -14,6 +14,7 @@ export default interface TaskRepository {
     getTotalCredit(operation: OperationEnum): Promise<number>;
     getCompletedTasks(): Promise<Task[]>;
     deleteTask(taskId: number): Promise<void>;
+    getSuggestionTask(searchTerm:string): Promise<Task[]>;
 }
 
 export class Task {
