@@ -1,6 +1,6 @@
-# 📱 Daily Balance – React Native App
+# 📱 Time save – React Native App
 
-**Daily Balance** is a productivity-focused mobile application built with **React Native** that helps users manage and track their daily activities by assigning **credits** and **debits** based on behavior. The goal is to encourage healthier habits and a balanced lifestyle.
+**Time save** is a productivity-focused mobile application built with **React Native** that helps users manage and track their daily activities by assigning **credits** and **debits** based on behavior. The goal is to encourage healthier habits and a balanced lifestyle.
 
 ## 🧠 How it Works
 
@@ -14,6 +14,7 @@ Over time, users can visualize how balanced their day or week has been, helping 
 - [React Native](https://reactnative.dev/) – Cross-platform mobile development
 - [React Navigation](https://reactnavigation.org/) – For screen routing
 - (Add more libraries or tools here if needed)
+- Copilot :relaxed:
 
 ## 🚀 Goals
 
