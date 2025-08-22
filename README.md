@@ -11,8 +11,9 @@ Over time, users can visualize how balanced their day or week has been, helping 
 
 ## 🔧 Built With
 
-- [React Native](https://reactnative.dev/) – Cross-platform mobile development
-- [React Navigation](https://reactnavigation.org/) – For screen routing
+- [React Native](https://reactnative.dev/) – Cross-platform mobile development   
+- [Expo](https://expo.dev/)   
+- [React Native Paper](https://callstack.github.io/react-native-paper/)   
 - (Add more libraries or tools here if needed)
 - Copilot :relaxed:
 
@@ -20,5 +21,4 @@ Over time, users can visualize how balanced their day or week has been, helping 
 
 - Promote self-awareness and motivation through a credit-based feedback system.
 - Encourage users to develop healthier routines and reduce time spent on unproductive habits.
-- Keep the app lightweight, intuitive, and visually rewarding.
-
+- Keep the app lightweight, intuitive, and visually rewarding (in progress, not a designer!).

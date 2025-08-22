@@ -1,4 +1,5 @@
 import { TaskOutput } from "@/src/services/TaskService";
+import OperationEnum from "@/src/shared/OperationEnum";
 import { View } from "react-native";
 import { Card, Text } from "react-native-paper";
 
@@ -7,10 +8,16 @@ export interface HistoryCardProps {
 }
 
 export function HistoryCard({ task }: HistoryCardProps) {
+    function formatValue(): string{
+        if (task.operation === OperationEnum.DEBIT){
+            return `-${task.value}`;
+        }
+        return `${task.value}`;
+    }
     return (
         <Card>
             <Card.Content>
-                <Text variant="headlineMedium">{task.task}</Text>
+                <Text variant="headlineSmall">{task.task}</Text>
                 <View style={{
                     flexDirection: "row",
                     justifyContent: "space-between",
@@ -20,7 +27,7 @@ export function HistoryCard({ task }: HistoryCardProps) {
                 </View>
                 <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                     <Text variant="bodyMedium">Operation: {task.operation}</Text>
-                    <Text variant="bodyMedium">Value: {task.value}</Text>
+                    <Text variant="bodyMedium">Value: {formatValue()}</Text>
                 </View>
                 <Text variant="bodyMedium">Type: {task.type}</Text>
                 <Text variant="bodyMedium">Tags: {task.tags}</Text>

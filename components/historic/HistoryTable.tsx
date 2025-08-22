@@ -13,6 +13,11 @@ export function HistoryTable() {
                     <HistoryCard
                         task={item} />
                 )}
+                contentContainerStyle={{ 
+                    paddingLeft: 8,
+                    paddingRight: 8,
+                    rowGap: 8,
+                }}
             />
         </View>
     );
