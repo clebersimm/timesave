@@ -1,4 +1,4 @@
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { DefaultTheme, MD3Colors } from "react-native-paper";
 
@@ -23,7 +23,7 @@ export default function TabLayout() {
                         headerTintColor: DefaultTheme.colors.onPrimary,
                         headerShown: true,
                         tabBarIcon: ({ color }) => (
-                            <FontAwesome name="home" color={color} size={24} />
+                            <FontAwesome5 name="clipboard-list" color={color} size={24} />
                         ),
                         headerStyle: {                           
                             backgroundColor: DefaultTheme.colors.primary,
@@ -34,11 +34,11 @@ export default function TabLayout() {
                 <Tabs.Screen
                     name="historic"
                     options={{
-                        title: 'Historic',
+                        title: 'Completed',
                         headerTintColor: DefaultTheme.colors.onPrimary,
                         headerShown: true,
                         tabBarIcon: ({ color }) => (
-                            <FontAwesome name="history" color={color} size={24} />
+                            <FontAwesome5 name="clipboard-check" color={color} size={24} />
                         ),
                         headerStyle: {                           
                             backgroundColor: DefaultTheme.colors.primary,
@@ -53,7 +53,7 @@ export default function TabLayout() {
                         headerTintColor: DefaultTheme.colors.onPrimary,
                         headerShown: true,
                         tabBarIcon: ({ color }) => (
-                            <FontAwesome name="cog" color={color} size={24} />
+                            <FontAwesome5 name="cog" color={color} size={24} />
                         ),
                         headerStyle: {                           
                             backgroundColor: DefaultTheme.colors.primary,
