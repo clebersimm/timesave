@@ -1,7 +1,6 @@
 import TaskTypeEnum from "@/src/shared/TaskTypeEnum";
 import { View } from "react-native";
-import { RadioButton, Text } from "react-native-paper";
-import RadioGroupInput from "./RadioGroupInput";
+import { SegmentedButtons, Text } from "react-native-paper";
 
 interface RadioButtonConfigProps {
     onValueChangeHandler: Function;
@@ -10,24 +9,24 @@ interface RadioButtonConfigProps {
 
 export default function TaskTypeInput({ value, onValueChangeHandler }: RadioButtonConfigProps) {
     return (
-        <RadioGroupInput>
+        <View style={{ marginVertical: 8, gap: 8, paddingLeft: 8, paddingRight: 8 }}>
             <Text variant="titleMedium">Task Type</Text>
-            <RadioButton.Group
+            <SegmentedButtons
+                value={value}
                 onValueChange={(newValue) => onValueChangeHandler(newValue)}
-                value={value}>
-                <View>
-                    <Text>{TaskTypeEnum.TIME}</Text>
-                    <RadioButton.Item
-                        label={TaskTypeEnum.TIME}
-                        value={TaskTypeEnum.TIME} />
-                </View>
-                <View>
-                    <Text>{TaskTypeEnum.ACTION}</Text>
-                    <RadioButton.Item
-                        label={TaskTypeEnum.ACTION}
-                        value={TaskTypeEnum.ACTION} />
-                </View>
-            </RadioButton.Group>
-        </RadioGroupInput>
+                buttons={[
+                    {
+                        value: TaskTypeEnum.TIME,
+                        label: TaskTypeEnum.TIME,
+                        icon: "clock",
+                    },
+                    {
+                        value: TaskTypeEnum.ACTION,
+                        label: TaskTypeEnum.ACTION,
+                        icon: "play",
+                    },
+                ]}
+            />
+        </View>
     );
 }

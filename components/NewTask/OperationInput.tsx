@@ -1,7 +1,6 @@
 import OperationEnum from "@/src/shared/OperationEnum";
 import { View } from "react-native";
-import { RadioButton, Text } from "react-native-paper";
-import RadioGroupInput from "./RadioGroupInput";
+import { SegmentedButtons, Text } from "react-native-paper";
 
 interface RadioButtonConfigProps {
     onValueChangeHandler: Function;
@@ -10,23 +9,24 @@ interface RadioButtonConfigProps {
 
 export default function OperationInput({ value, onValueChangeHandler }: RadioButtonConfigProps) {
     return (
-        <RadioGroupInput>
-            <View>
-                <Text variant="titleMedium">Operation</Text>
-            </View>
-            <RadioButton.Group onValueChange={
-                (newValue) => onValueChangeHandler(newValue)
-            }
-                value={value}>
-                <View>
-                    <Text>{OperationEnum.CREDIT}</Text>
-                    <RadioButton.Item label={OperationEnum.CREDIT} value={OperationEnum.CREDIT} />
-                </View>
-                <View>
-                    <Text>{OperationEnum.DEBIT}</Text>
-                    <RadioButton.Item label={OperationEnum.DEBIT} value={OperationEnum.DEBIT} />
-                </View>
-            </RadioButton.Group>
-        </RadioGroupInput>
+        <View style={{ marginVertical: 8, gap: 8, paddingLeft: 8, paddingRight: 8 }}>
+            <Text variant="titleMedium">Operation</Text>
+            <SegmentedButtons
+                value={value}
+                onValueChange={(newValue) => onValueChangeHandler(newValue)}
+                buttons={[
+                    {
+                        value: OperationEnum.CREDIT,
+                        label: OperationEnum.CREDIT,
+                        icon: "plus",
+                    },
+                    {
+                        value: OperationEnum.DEBIT,
+                        label: OperationEnum.DEBIT,
+                        icon: "minus",
+                    },
+                ]}
+            />
+        </View>
     );
 }
