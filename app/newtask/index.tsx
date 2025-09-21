@@ -149,7 +149,7 @@ export default function NewTask(this: any) {
                 }} />
                 {suggestions.length > 0 && (
                     <View>
-                        <Text style={{ marginLeft: 4, marginBottom: 4, fontSize: 16, color: '#888' }}>
+                        <Text style={{ marginLeft: 4, marginBottom: 4, fontSize: 16 }}>
                             Suggestions
                         </Text>
                         <FlatList
@@ -159,14 +159,15 @@ export default function NewTask(this: any) {
                                 <TouchableOpacity onPress={() => handleSuggestionSelect(item)}>
                                     <View style={{
                                         flex: 1,
-                                        paddingLeft: 8,
-                                        paddingBottom: 8,
+                                        padding: 8,
                                         flexDirection: 'row',
-                                        borderBottomWidth: 0.3,
-                                        borderBottomColor: '#ccc'
+                                        alignItems: 'center',
+                                        gap: 4
                                     }}>
-                                        <Text style={{ flexShrink: 1, flexWrap: 'wrap' }}>{item.task}</Text>
-                                        <Text style={{ flexShrink: 1, flexWrap: 'wrap', color: '#888' }}> Tags: {item.tags}</Text>
+                                        <Text style={{ flexShrink: 1, flexWrap: 'wrap', fontWeight: 'bold' }}>Task:</Text>
+                                        <Text>{item.task}</Text>
+                                        <Text style={{ flexShrink: 1, flexWrap: 'wrap', fontWeight: 'bold' }}> Tags:</Text>
+                                        <Text>{item.tags}</Text>
                                     </View>
                                 </TouchableOpacity>
                             )}

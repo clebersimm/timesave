@@ -2,6 +2,7 @@ import { FlatList, StyleSheet, View } from "react-native";
 import { TodoTableItem } from "./TodoTableItem";
 import { useTaskContext } from "@/src/context/TaskContext";
 import { Text } from "react-native-paper";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 export default function TodoTable() {
   const { tasks } = useTaskContext();
@@ -14,8 +15,10 @@ export default function TodoTable() {
     <View style={style.container}>
       <FlatList
         ListEmptyComponent={() => (
-          <View style={{ padding: 16, alignItems: 'center' }}>
-            <Text>No tasks available</Text>
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 16, height: '100%' }}>
+            <FontAwesome5 name="clipboard-list" size={80} color="black" style={{ marginBottom: 16 }} />
+            <Text variant="headlineSmall">No Tasks Available.</Text>
+            <Text variant="bodyLarge">Add tasks to get started!</Text>
           </View>
         )}
         data={tasks}
@@ -27,7 +30,10 @@ export default function TodoTable() {
             onPress={() => handleIconPress(item.id)}
           />
         )}
-        contentContainerStyle={{ paddingBottom: 80 }} 
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingBottom: 80
+        }}
       />
     </View>
   );
