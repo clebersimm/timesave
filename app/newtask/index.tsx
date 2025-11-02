@@ -1,8 +1,7 @@
 import Loading from "@/components/Loading/Loading";
 import NewTaskHeader from "@/components/NewTask/Header";
 import NewTaskTextInput from "@/components/NewTask/NewTaskTextInput";
-import OperationInput from "@/components/NewTask/OperationInput";
-import TaskTypeInput from "@/components/NewTask/TaskTypeInput";
+import SelectTwoParameterTypeInput from "@/components/SelectTypeInput/SelectTwoParameterTypeInput";
 import { useTaskContext } from "@/src/context/TaskContext";
 import { Task } from "@/src/repository/TaskRepository";
 import { TaskInput } from "@/src/services/TaskService";
@@ -11,7 +10,7 @@ import TaskTypeEnum from "@/src/shared/TaskTypeEnum";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Alert, FlatList, TextInput, Touchable, TouchableOpacity, View } from "react-native";
-import { Text } from "react-native-paper";
+import { MD2Colors, Text } from "react-native-paper";
 
 export type TaksForm = {
     task: string;
@@ -184,15 +183,18 @@ export default function NewTask(this: any) {
                         onChangeText: inputChagedHandler.bind(this, "tags"),
                     }}
                 />
-                <TaskTypeInput
-                    value={inputForm.type}
+                <SelectTwoParameterTypeInput
+                    value1={{ value: TaskTypeEnum.TIME, icon: "clock", title: "Time", color: MD2Colors.green500 }}
+                    value2={{ value: TaskTypeEnum.ACTION, icon: "play", title: "Action", color: MD2Colors.blue500 }}
+                    title="Select Task Type"
                     onValueChangeHandler={(newValue: TaskTypeEnum) => changeValueHandler("type", newValue)}
                 />
-
                 {ValueInput}
-                <OperationInput
-                    value={inputForm.operation}
-                    onValueChangeHandler={(newValue: TaskTypeEnum) => changeValueHandler("operation", newValue)}
+                <SelectTwoParameterTypeInput
+                    value1={{ value: OperationEnum.CREDIT, icon: "plus", title: "Credit", color: MD2Colors.green500 }}
+                    value2={{ value: OperationEnum.DEBIT, icon: "minus", title: "Debit", color: MD2Colors.red500 }}
+                    title="Select Operation Type"
+                    onValueChangeHandler={(newValue: OperationEnum) => changeValueHandler("operation", newValue)}
                 />
             </View>
             {loading}
