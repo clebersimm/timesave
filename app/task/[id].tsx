@@ -62,7 +62,6 @@ export default function Task() {
 
     useEffect(() => {
         if (activateTimer) {
-            console.log("Timer activated for task:", task?.id);
             Notifications.scheduleNotificationAsync({
                 content: {
                     title: "Task Ongoing",
@@ -108,8 +107,40 @@ export default function Task() {
         return taskId?.toString() + Math.random().toString();
     }
 
+    const _completeTaskButtonVisible = () => {
+        if(task?.type === TaskTypeEnum.TIME){
+            if ((task?.status === StatusEnum.ONGOING) || (task?.status == StatusEnum.STOPED) ){
+                return true;
+            }
+        } else if (task?.type === TaskTypeEnum.ACTION){
+            if (task?.status === StatusEnum.PENDING){
+                return true;
+            }
+        }    
+        return false;
+    }
 
     const buttons = [
+        {
+            component: (
+                <DeleteButton
+                    key={_createHashKey(task?.id) + "action"}
+                    deleteHandler={deleteHandler}
+                />
+            ),
+            visible: ((task?.status === StatusEnum.PENDING)),
+            key: _createHashKey(task?.id),
+        },        
+        {
+            component: (
+                <CompleteTaskButton
+                    key={_createHashKey(task?.id) + "complete"}
+                    actionHandler={completeHandler}
+                />
+            ),
+            visible: _completeTaskButtonVisible(),
+            key: _createHashKey(task?.id),
+        },
         {
             component: (
                 <ActionButton
@@ -122,26 +153,7 @@ export default function Task() {
             visible: ((task?.status !== StatusEnum.COMPLETED) && (task?.type === TaskTypeEnum.TIME)),
             key: _createHashKey(task?.id),
         },
-        {
-            component: (
-                <CompleteTaskButton
-                    key={_createHashKey(task?.id) + "complete"}
-                    actionHandler={completeHandler}
-                />
-            ),
-            visible: task?.status !== StatusEnum.COMPLETED,
-            key: _createHashKey(task?.id),
-        },
-        {
-            component: (
-                <DeleteButton
-                    key={_createHashKey(task?.id) + "action"}
-                    deleteHandler={deleteHandler}
-                />
-            ),
-            visible: ((task?.status === StatusEnum.PENDING)),
-            key: _createHashKey(task?.id),
-        }
+        
     ];
 
     const visibleButtons = buttons
@@ -161,6 +173,7 @@ export default function Task() {
             </View>
             <HistoryContainer
                 taskId={task?.id}
+                taskType={task?.type}
             />
         </View>
     );

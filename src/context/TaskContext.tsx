@@ -19,7 +19,7 @@ interface TaskContextProps {
     getTaskHistoryByTaskId: (taskId: number) => Promise<void>;
     taskHistory: TaskHistoryOutput[];
     taskCredit: number;
-    calculateTaskCredit: (taskId: number) => Promise<void>;
+    calculateTaskCredit: (taskId: number | undefined) => Promise<void>;
     totalDebit: number;
     getTotalDebit: () => Promise<void>;
     fetchCompletedTasks: () => Promise<void>;
@@ -119,12 +119,16 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     }
 
-    const calculateTaskCredit = async (taskId: number) => {
-        const taskCredit = await taskService.calculateTaskCredit(taskId);
-        if (!taskCredit) {
-            setTaskCredit(0);
+    const calculateTaskCredit = async (taskId: number | undefined)  => {
+        if(taskId === undefined){
+            setTaskCredit(0);         
         } else {
-            setTaskCredit(taskCredit);
+            const taskCredit = await taskService.calculateTaskCredit(taskId);
+            if (!taskCredit) {
+                setTaskCredit(0);
+            } else {
+                setTaskCredit(taskCredit);
+            }
         }
     }
 

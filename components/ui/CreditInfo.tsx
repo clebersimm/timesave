@@ -11,15 +11,15 @@ export default function CreditInfo() {
     <View style={style.container}>
       <View style={[style.box, style.boxColorCredit]}>
         <Text style={[style.labelStyle, style.labelCredit]}>Credit</Text>
-        <Text>{totalCredit}</Text>
+        <Text variant="titleLarge">{totalCredit}</Text>
       </View>
       <View style={[style.box, style.boxColorDebit]}>
         <Text style={[style.labelStyle, style.labelDebit]}>Debits</Text>
-        <Text>{totalDebit}</Text>
+        <Text variant="titleLarge">{totalDebit}</Text>
       </View>
       <View style={[style.box]}>
         <Text style={[style.labelStyle, totalLabelColor]}>Total</Text>
-        <Text>{total}</Text>
+        <Text variant="titleLarge">{total}</Text>
       </View>
     </View>
   );

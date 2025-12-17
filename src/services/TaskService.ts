@@ -264,13 +264,15 @@ export class TaskServiceImpl implements TaskServiceInterface {
 
     async calculateTaskCredit(id: number): Promise<number | null> {
         const task = await this._taskRepository.getTaskById(id);
-
         if (task?.type === TaskTypeEnum.ACTION) {
             return task.value ?? 0;
         }
         const history = await this.getTaskHistoryByTaskId(id);
         if (history === null) {
             return null;
+        }
+        if(history.length === 0){
+            return 0;
         }
         let updateAt: Date = history[0].updated_at;
         let totalCredit = 0;
@@ -289,7 +291,6 @@ export class TaskServiceImpl implements TaskServiceInterface {
         } catch (error) {
             console.log("error", error);
         }
-
         return totalCredit;
     }
     async completeTask(id: number): Promise<TaskOutput | null> {

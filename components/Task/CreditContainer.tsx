@@ -12,9 +12,6 @@ export interface CreditContainerProps {
 export default function CreditContainer({ taskId, taskOperation }: CreditContainerProps) {
     const { calculateTaskCredit, taskCredit } = useTaskContext();
     useEffect(() => {
-        if (taskId === undefined) {
-            return;
-        }
         calculateTaskCredit(taskId);
     }, [taskId]);
 
